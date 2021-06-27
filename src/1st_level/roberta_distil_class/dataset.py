@@ -3,15 +3,6 @@ import torch
 
 import config
 
-
-def jaccard_array(a, b):
-    """Calculates Jaccard on arrays."""
-    a = set(a)
-    b = set(b)
-    c = a.intersection(b)
-    return float(len(c)) / (len(a) + len(b) - len(c))
-
-
 def process_data(text, label,
                  tokenizer, max_len):
     """Preprocesses one data sample and returns a dict
@@ -45,7 +36,7 @@ def process_data(text, label,
             'labels': [label]}
 
 
-class ColeridgeDataset:
+class CommonlitDataset:
     def __init__(self, texts, labels):
         self.texts = texts
         self.labels = labels

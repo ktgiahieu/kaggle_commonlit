@@ -74,8 +74,7 @@ def run():
             outputs = sum(outputs_folds) / config.N_FOLDS
 
             outputs = outputs.cpu().detach().numpy()
-            for o in outputs:
-              predicted_labels.append(o > 0.5)
+            predicted_labels.extend(outputs.squeeze(-1).tolist())
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')

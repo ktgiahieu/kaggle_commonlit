@@ -15,10 +15,12 @@ import utils
 def run(fold):
     dfx = pd.read_csv(config.TRAINING_FILE)
 
+	dfx.rename(columns={'excerpt': 'text', 'target': 'label'}, inplace=True)
+
     df_train = dfx[dfx.kfold != fold].reset_index(drop=True)
     df_valid = dfx[dfx.kfold == fold].reset_index(drop=True)
 
-    train_dataset = dataset.ColeridgeDataset(
+    train_dataset = dataset.CommonlitDataset(
         texts=df_train.text.values,
         labels=df_train.label.values)
 
@@ -28,7 +30,7 @@ def run(fold):
         num_workers=4,
         shuffle=True)
 
-    valid_dataset = dataset.ColeridgeDataset(
+    valid_dataset = dataset.CommonlitDataset(
         texts=df_valid.text.values,
         labels=df_valid.label.values)
 
@@ -42,7 +44,7 @@ def run(fold):
     model_config = transformers.RobertaConfig.from_pretrained(
         config.MODEL_CONFIG)
     model_config.output_hidden_states = True
-    model = models.ColeridgeModel(conf=model_config)
+    model = models.CommonlitModel(conf=model_config)
     model = model.to(device)
 
     num_train_steps = int(
@@ -73,7 +75,7 @@ def run(fold):
     for epoch in range(config.EPOCHS):
         engine.train_fn(train_data_loader, model, optimizer,
                         device, scheduler=scheduler)
-        #jaccard = engine.eval_fn(valid_data_loader, model, device)
+        rmse_score = engine.eval_fn(valid_data_loader, model, device)
 
     if config.USE_SWA:
         optimizer.swap_swa_sgd()
@@ -84,8 +86,7 @@ def run(fold):
     torch.save(model.state_dict(),
                f'{config.MODEL_SAVE_PATH}/model_{fold}.bin')
 
-    # return jaccard
-    return 0
+    return rmse_score
 
 
 if __name__ == '__main__':
@@ -96,8 +97,8 @@ if __name__ == '__main__':
         fold_score = run(i)
         fold_scores.append(fold_score)
 
-    #print('\nScores without SWA:')
-    #for i in range(config.N_FOLDS):
-    #    print(f'Fold={i}, Jaccard = {fold_scores[i]}')
-    #print(f'Mean = {np.mean(fold_scores)}')
-    #print(f'Std = {np.std(fold_scores)}')
+    print('\nScores without SWA:')
+    for i in range(config.N_FOLDS):
+        print(f'Fold={i}, Jaccard = {fold_scores[i]}')
+    print(f'Mean = {np.mean(fold_scores)}')
+    print(f'Std = {np.std(fold_scores)}')

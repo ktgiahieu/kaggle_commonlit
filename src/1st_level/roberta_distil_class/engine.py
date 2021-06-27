@@ -6,7 +6,7 @@ import utils
 
 
 def loss_fn(outputs, labels, weight):
-    loss_fct = torch.nn.BCEWithLogitsLoss(weight=weight)
+    loss_fct = torch.nn.MSELoss()
     return loss_fct(outputs, labels)
 
 
@@ -31,7 +31,7 @@ def train_fn(data_loader, model, optimizer, device, scheduler=None):
         outputs = \
             model(ids=ids, mask=mask, token_type_ids=token_type_ids)
         
-        weight = torch.Tensor([10]).to(device, dtype=torch.float)
+        weight = torch.Tensor([1]).to(device, dtype=torch.float)
         loss = loss_fn(outputs, labels ,weight)
         loss.backward()
         optimizer.step()
@@ -44,7 +44,7 @@ def train_fn(data_loader, model, optimizer, device, scheduler=None):
 def eval_fn(data_loader, model, device):
     model.eval()
     losses = utils.AverageMeter()
-    jaccards = utils.AverageMeter()
+    rmse_scores = utils.AverageMeter()
 
     with torch.no_grad():
         tk0 = tqdm.tqdm(data_loader, total=len(data_loader))
@@ -63,5 +63,8 @@ def eval_fn(data_loader, model, device):
                 model(ids=ids, mask=mask, token_type_ids=token_type_ids)
             loss = loss_fn(outputs, labels)
 
-            outputs = outputs.cpu().detach().numpy()
-    return 0
+			rmse_scores.update(torch.sqrt(loss), ids.size(0))
+			losses.update(loss.item(), ids.size(0))
+			tk0.set_postfix(loss=losses.avg, jaccard=jaccards.avg)
+	print(f'RMSE = {rmse_scores.avg}')
+    return rmse_scores.avg

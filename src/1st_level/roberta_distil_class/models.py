@@ -4,9 +4,9 @@ import transformers
 import config
 
 
-class ColeridgeModel(transformers.BertPreTrainedModel):
+class CommonlitModel(transformers.BertPreTrainedModel):
     def __init__(self, conf):
-        super(ColeridgeModel, self).__init__(conf)
+        super(CommonlitModel, self).__init__(conf)
         self.roberta = transformers.RobertaModel.from_pretrained(
             config.MODEL_CONFIG,
             config=conf)
