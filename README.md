@@ -1,2 +1,2 @@
-# [Kaggle Coleridge Initiative - Show US the Data Competition](https://www.kaggle.com/c/coleridgeinitiative-show-us-the-data): 
+# [Kaggle CommonLit Readability Prize](https://www.kaggle.com/c/commonlitreadabilityprize/): 
 
