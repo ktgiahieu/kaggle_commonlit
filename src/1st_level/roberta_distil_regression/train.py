@@ -1,6 +1,3 @@
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning) 
-
 import os
 import numpy as np
 import pandas as pd
@@ -77,8 +74,8 @@ def run(fold):
 
     for epoch in range(config.EPOCHS):
         engine.train_fn(train_data_loader, model, optimizer,
-                        device, scheduler=scheduler)
-        rmse_score = engine.eval_fn(valid_data_loader, model, device)
+                        device, epoch, scheduler=scheduler)
+        rmse_score = engine.eval_fn(valid_data_loader, model, device, epoch)
 
     if config.USE_SWA:
         optimizer.swap_swa_sgd()
@@ -100,6 +97,7 @@ if __name__ == '__main__':
         fold_score = run(i)
         fold_scores.append(fold_score)
 
+	config.writer.close()
     print('\nScores without SWA:')
     for i in range(config.N_FOLDS):
         print(f'Fold={i}, RMSE = {fold_scores[i]}')

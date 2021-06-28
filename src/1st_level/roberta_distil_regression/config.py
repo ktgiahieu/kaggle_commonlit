@@ -1,3 +1,10 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning) 
+
+from torch.utils.tensorboard import SummaryWriter
+# Writer will output to ./runs/ directory by default
+writer = SummaryWriter("runs")
+
 import tokenizers
 from transformers import AutoTokenizer
 import os
@@ -34,7 +41,7 @@ else: #colab
 # Model params
 SEED = 25
 N_FOLDS = 5
-EPOCHS = 4
+EPOCHS = 6
 LEARNING_RATE = 5e-5
 PATIENCE = None
 EARLY_STOPPING_DELTA = None

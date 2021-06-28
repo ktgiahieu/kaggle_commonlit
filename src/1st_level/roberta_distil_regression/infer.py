@@ -1,5 +1,3 @@
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning) 
 import pickle
 import os
 
