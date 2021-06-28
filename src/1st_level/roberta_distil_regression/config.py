@@ -1,5 +1,5 @@
 import tokenizers
-from transformers import AutoTokenizerFast
+from transformers import AutoTokenizer
 import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
@@ -44,7 +44,7 @@ TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 32
 MAX_LEN = 384  # actually = inf
 
-TOKENIZER = AutoTokenizerFast.from_pretrained(
+TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
 HIDDEN_SIZE = 768

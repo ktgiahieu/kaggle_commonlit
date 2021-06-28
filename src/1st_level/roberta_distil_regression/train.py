@@ -14,8 +14,8 @@ import utils
 
 def run(fold):
     dfx = pd.read_csv(config.TRAINING_FILE)
-
-	dfx.rename(columns={'excerpt': 'text', 'target': 'label'}, inplace=True)
+    
+    dfx.rename(columns={'excerpt': 'text', 'target': 'label'}, inplace=True)
 
     df_train = dfx[dfx.kfold != fold].reset_index(drop=True)
     df_valid = dfx[dfx.kfold == fold].reset_index(drop=True)
