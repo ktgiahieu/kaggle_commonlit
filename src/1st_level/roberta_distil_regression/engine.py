@@ -18,7 +18,6 @@ def train_fn(data_loader, model, optimizer, device, scheduler=None):
 
     for bi, d in enumerate(tk0):
         ids = d['ids']
-        token_type_ids = d['token_type_ids']
         mask = d['mask']
         labels = d['labels']
 
@@ -50,7 +49,6 @@ def eval_fn(data_loader, model, device):
         tk0 = tqdm.tqdm(data_loader, total=len(data_loader))
         for bi, d in enumerate(tk0):
             ids = d['ids']
-            token_type_ids = d['token_type_ids']
             mask = d['mask']
             labels = d['labels']
 

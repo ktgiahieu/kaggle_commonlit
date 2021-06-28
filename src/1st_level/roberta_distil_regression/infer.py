@@ -15,7 +15,7 @@ import utils
 def run():
     df_test = pd.read_csv(config.TEST_FILE)
     df_test.loc[:, 'label'] = 0
-	dfx.rename(columns={'excerpt': 'text'}, inplace=True)
+    dfx.rename(columns={'excerpt': 'text'}, inplace=True)
 
     device = torch.device('cuda')
     model_config = transformers.AutoConfig.from_pretrained(
@@ -48,7 +48,6 @@ def run():
         tk0 = tqdm.tqdm(data_loader, total=len(data_loader))
         for bi, d in enumerate(tk0):
             ids = d['ids']
-            token_type_ids = d['token_type_ids']
             mask = d['mask']
             labels = d['labels']
 
