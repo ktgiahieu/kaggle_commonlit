@@ -2,7 +2,6 @@ import numpy as np
 import torch
 import tqdm
 
-import config
 import utils
 
 
@@ -11,7 +10,7 @@ def loss_fn(outputs, labels):
     return loss_fct(outputs, labels)
 
 
-def train_fn(data_loader, model, optimizer, device, epoch, scheduler=None):
+def train_fn(data_loader, model, optimizer, device, epoch, writer, scheduler=None):
     model.train()
     losses = utils.AverageMeter()
 
@@ -37,10 +36,10 @@ def train_fn(data_loader, model, optimizer, device, epoch, scheduler=None):
 
         losses.update(loss.item(), ids.size(0))
         tk0.set_postfix(loss=losses.avg)
-    config.writer.add_scalar('Loss/train', losses.sum, epoch)
+    writer.add_scalar('Loss/train', losses.sum, epoch)
 
 
-def eval_fn(data_loader, model, device, epoch):
+def eval_fn(data_loader, model, device, epoch, writer):
     model.eval()
     losses = utils.AverageMeter()
     rmse_scores = utils.AverageMeter()
@@ -64,6 +63,6 @@ def eval_fn(data_loader, model, device, epoch):
             losses.update(loss.item(), ids.size(0))
             tk0.set_postfix(loss=losses.avg, rmse_scores=rmse_scores.avg)
     
-    config.writer.add_scalar('Loss/val', losses.sum, epoch)
+    writer.add_scalar('Loss/val', losses.sum, epoch)
     print(f'RMSE = {rmse_scores.avg}')
     return rmse_scores.avg

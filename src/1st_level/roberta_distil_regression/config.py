@@ -1,10 +1,6 @@
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning) 
 
-from torch.utils.tensorboard import SummaryWriter
-# Writer will output to ./runs/ directory by default
-writer = SummaryWriter("runs")
-
 import tokenizers
 from transformers import AutoTokenizer
 import os
