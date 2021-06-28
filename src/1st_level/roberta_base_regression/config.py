@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-	save_model = 'roberta_base_regression'
+    save_model = 'roberta_base_regression'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -42,8 +42,8 @@ EPOCHS = 4
 LEARNING_RATE = 2e-5
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 32
-VALID_BATCH_SIZE = 32
+TRAIN_BATCH_SIZE = 16
+VALID_BATCH_SIZE = 16
 MAX_LEN = 384  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(

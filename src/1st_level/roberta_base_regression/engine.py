@@ -35,14 +35,13 @@ def train_fn(data_loader, model, optimizer, device, epoch, writer, scheduler=Non
         scheduler.step()
 
         losses.update(loss.item(), ids.size(0))
-        tk0.set_postfix(loss=losses.avg)
-    writer.add_scalar('Loss/train', losses.avg, epoch)
+        tk0.set_postfix(loss=np.sqrt(losses.avg))
+    writer.add_scalar('Loss/train', np.sqrt(losses.avg), epoch)
 
 
 def eval_fn(data_loader, model, device, epoch, writer):
     model.eval()
     losses = utils.AverageMeter()
-    rmse_scores = utils.AverageMeter()
 
     with torch.no_grad():
         tk0 = tqdm.tqdm(data_loader, total=len(data_loader))
@@ -59,10 +58,9 @@ def eval_fn(data_loader, model, device, epoch, writer):
                 model(ids=ids, mask=mask)
             loss = loss_fn(outputs, labels)
 
-            rmse_scores.update(torch.sqrt(loss).item(), ids.size(0))
             losses.update(loss.item(), ids.size(0))
-            tk0.set_postfix(loss=losses.avg, rmse_scores=rmse_scores.avg)
+            tk0.set_postfix(loss=np.sqrt(losses.avg))
     
-    writer.add_scalar('Loss/val', losses.avg, epoch)
-    print(f'RMSE = {rmse_scores.avg}')
-    return rmse_scores.avg
+    writer.add_scalar('Loss/val', np.sqrt(losses.avg), epoch)
+    print(f'RMSE = {np.sqrt(losses.avg)}')
+    return np.sqrt(losses.avg)
