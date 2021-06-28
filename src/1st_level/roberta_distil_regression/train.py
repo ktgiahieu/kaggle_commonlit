@@ -96,8 +96,8 @@ if __name__ == '__main__':
     for i in range(config.N_FOLDS):
         fold_score = run(i)
         fold_scores.append(fold_score)
-
-	config.writer.close()
+        
+    config.writer.close()
     print('\nScores without SWA:')
     for i in range(config.N_FOLDS):
         print(f'Fold={i}, RMSE = {fold_scores[i]}')
