@@ -5,7 +5,7 @@ import tqdm
 import utils
 
 
-def loss_fn(outputs, labels, weight):
+def loss_fn(outputs, labels):
     loss_fct = torch.nn.MSELoss()
     return loss_fct(outputs, labels)
 
@@ -22,16 +22,14 @@ def train_fn(data_loader, model, optimizer, device, scheduler=None):
         labels = d['labels']
 
         ids = ids.to(device, dtype=torch.long)
-        token_type_ids = token_type_ids.to(device, dtype=torch.long)
         mask = mask.to(device, dtype=torch.long)
         labels = labels.to(device, dtype=torch.float)
 
         model.zero_grad()
         outputs = \
-            model(ids=ids, mask=mask, token_type_ids=token_type_ids)
+            model(ids=ids, mask=mask)
         
-        weight = torch.Tensor([1]).to(device, dtype=torch.float)
-        loss = loss_fn(outputs, labels ,weight)
+        loss = loss_fn(outputs, labels)
         loss.backward()
         optimizer.step()
         scheduler.step()
@@ -53,12 +51,11 @@ def eval_fn(data_loader, model, device):
             labels = d['labels']
 
             ids = ids.to(device, dtype=torch.long)
-            token_type_ids = token_type_ids.to(device, dtype=torch.long)
             mask = mask.to(device, dtype=torch.long)
             labels = labels.to(device, dtype=torch.float)
 
             outputs = \
-                model(ids=ids, mask=mask, token_type_ids=token_type_ids)
+                model(ids=ids, mask=mask)
             loss = loss_fn(outputs, labels)
 
             rmse_scores.update(torch.sqrt(loss), ids.size(0))

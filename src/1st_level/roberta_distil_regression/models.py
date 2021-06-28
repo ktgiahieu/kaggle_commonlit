@@ -21,11 +21,10 @@ class CommonlitModel(transformers.BertPreTrainedModel):
                 if layer.bias is not None:
                     layer.bias.data.zero_()
 
-    def forward(self, ids, mask, token_type_ids):
+    def forward(self, ids, mask):
         # sequence_output of N_LAST_HIDDEN + Embedding states
         # (N_LAST_HIDDEN + 1, batch_size, num_tokens, 768)
-        out = self.roberta(ids, attention_mask=mask,
-                                 token_type_ids=token_type_ids)
+        out = self.roberta(ids, attention_mask=mask)
         out = out.last_hidden_state 
 
         return self.classifier(out[:, 0, :].squeeze(1))

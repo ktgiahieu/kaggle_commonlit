@@ -52,7 +52,6 @@ def run():
             labels = d['labels']
 
             ids = ids.to(device, dtype=torch.long)
-            token_type_ids = token_type_ids.to(device, dtype=torch.long)
             mask = mask.to(device, dtype=torch.long)
             labels = labels.to(device, dtype=torch.float)
 
@@ -60,7 +59,7 @@ def run():
             outputs_folds = []
             for i in range(config.N_FOLDS):
                 outputs = \
-                  model(ids=ids, mask=mask, token_type_ids=token_type_ids)
+                  model(ids=ids, mask=mask)
 
                 outputs_folds.append(outputs)
 
