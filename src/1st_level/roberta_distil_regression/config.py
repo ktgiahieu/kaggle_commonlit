@@ -6,18 +6,17 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 # Paths
 if is_kaggle:
     comp_name = 'commonlitreadabilityprize'
-    my_impl = 'my-commonlit-impl'
-    my_model_dataset = 'commonlit-roberta-distil-classifier-model'
+    my_impl = 'commonlit-impl'
+    my_model_dataset = 'commonlit-roberta-distil-regression'
 
-    TOKENIZER_PATH = f'../input/{my_impl}/src/1st_level/roberta_tokenizer'
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
-    TEST_FILE = 'test.csv'
+    TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
     MODEL_SAVE_PATH = f'../input/{my_model_dataset}'
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/my-distilroberta-base'
+    MODEL_CONFIG = '../input/distilroberta-base'
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
