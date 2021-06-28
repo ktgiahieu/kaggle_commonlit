@@ -31,13 +31,12 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_regression'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    #MODEL_CONFIG = 'huawei-noah/TinyBERT_General_4L_312D'
     MODEL_CONFIG = 'distilroberta-base'
 
 # Model params
 SEED = 25
 N_FOLDS = 5
-EPOCHS = 20
+EPOCHS = 4
 LEARNING_RATE = 5e-5
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
