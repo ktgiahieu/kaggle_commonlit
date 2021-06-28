@@ -41,7 +41,7 @@ def run(fold):
         shuffle=False)
 
     device = torch.device('cuda')
-    model_config = transformers.RobertaConfig.from_pretrained(
+    model_config = transformers.AutoConfig.from_pretrained(
         config.MODEL_CONFIG)
     model_config.output_hidden_states = True
     model = models.CommonlitModel(conf=model_config)
@@ -99,6 +99,6 @@ if __name__ == '__main__':
 
     print('\nScores without SWA:')
     for i in range(config.N_FOLDS):
-        print(f'Fold={i}, Jaccard = {fold_scores[i]}')
+        print(f'Fold={i}, RMSE = {fold_scores[i]}')
     print(f'Mean = {np.mean(fold_scores)}')
     print(f'Std = {np.std(fold_scores)}')

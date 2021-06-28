@@ -7,7 +7,7 @@ import config
 class CommonlitModel(transformers.BertPreTrainedModel):
     def __init__(self, conf):
         super(CommonlitModel, self).__init__(conf)
-        self.roberta = transformers.RobertaModel.from_pretrained(
+        self.roberta = transformers.AutoModel.from_pretrained(
             config.MODEL_CONFIG,
             config=conf)
         self.classifier = torch.nn.Sequential(

@@ -1,33 +1,33 @@
 import tokenizers
+from transformers import AutoTokenizerFast
 import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
 if is_kaggle:
-    comp_name = 'coleridgeinitiative-show-us-the-data'
-    my_restructured_dataset = 'my-coleridgeinitiative-show-us-the-data'
-    my_impl_dataset = 'my-coleridge-initiative-impl'
-    my_model_dataset = 'my-roberta-base-squad2-qa-model'
+    comp_name = 'commonlitreadabilityprize'
+    my_impl = 'my-commonlit-impl'
+    my_model_dataset = 'commonlit-roberta-distil-classifier-model'
 
-    TOKENIZER_PATH = f'../input/{my_impl_dataset}/src/1st_level/roberta_tokenizer'
-    TRAINING_FILE = f'../input/{my_restructured_dataset}/data/train_folds.csv'
+    TOKENIZER_PATH = f'../input/{my_impl}/src/1st_level/roberta_tokenizer'
+    TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = 'test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
     MODEL_SAVE_PATH = f'../input/{my_model_dataset}'
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/my-roberta-base-squad2'
+    MODEL_CONFIG = '../input/my-distilroberta-base'
 else: #colab
-    repo_name = 'kaggle_coleridge_initiative'
-    drive_name = 'ColeridgeInitiative'
+    repo_name = 'kaggle_commonlit'
+    drive_name = 'Commonlit'
     
     TOKENIZER_PATH = f'/content/{repo_name}/src/1st_level/roberta_tokenizer'
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
     SUB_FILE = f'/content/{repo_name}/data/sample_submission.csv'
-    MODEL_SAVE_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_class'
-    TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_class'
+    MODEL_SAVE_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_classifier'
+    TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_classifier'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
     #MODEL_CONFIG = 'huawei-noah/TinyBERT_General_4L_312D'
@@ -43,12 +43,10 @@ EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 32
 MAX_LEN = 384  # actually = inf
-print(f'{TOKENIZER_PATH}/vocab.json')
-TOKENIZER = tokenizers.ByteLevelBPETokenizer.from_file(
-    vocab_filename=f'{TOKENIZER_PATH}/vocab.json',
-    merges_filename=f'{TOKENIZER_PATH}/merges.txt',
-    lowercase=True,
-    add_prefix_space=True)
+
+TOKENIZER = AutoTokenizerFast.from_pretrained(
+    MODEL_CONFIG)
+
 HIDDEN_SIZE = 768
 N_LAST_HIDDEN = 6
 HIGH_DROPOUT = 0.5

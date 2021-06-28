@@ -14,23 +14,17 @@ import utils
 
 def run():
     df_test = pd.read_csv(config.TEST_FILE)
-    df_test.loc[:, 'dataset_label'] = df_test.text.values
-
-    #temporary fix
-    word_len =df_test.text.apply(lambda x:len(str(x).split()))
-    df_test = df_test[word_len <= config.MAX_LEN - 2]
-    tokenizer = config.TOKENIZER
-    word_len_tokenized = df_test.text.apply(lambda x:len(tokenizer.encode(' '+' '.join(str(x).split())).ids))
-    df_test = df_test[word_len_tokenized <= config.MAX_LEN - 2]
+    df_test.loc[:, 'label'] = 0
+	dfx.rename(columns={'excerpt': 'text'}, inplace=True)
 
     device = torch.device('cuda')
-    model_config = transformers.RobertaConfig.from_pretrained(
+    model_config = transformers.AutoConfig.from_pretrained(
         config.MODEL_CONFIG)
     model_config.output_hidden_states = True
 
     fold_models = []
     for i in range(config.N_FOLDS):
-        model = models.ColeridgeModel(conf=model_config)
+        model = models.CommonlitModel(conf=model_config)
         model.to(device)
         model.load_state_dict(torch.load(
             f'{config.TRAINED_MODEL_PATH}/model_{i}.bin'),
@@ -40,7 +34,7 @@ def run():
 
     test_dataset = dataset.ColeridgeDataset(
         texts=df_test.text.values,
-        dataset_labels=df_test.dataset_label.values)
+        dataset_labels=df_test.label.values)
 
     data_loader = torch.utils.data.DataLoader(
         test_dataset,

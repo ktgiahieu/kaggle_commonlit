@@ -8,31 +8,24 @@ def process_data(text, label,
     """Preprocesses one data sample and returns a dict
     with targets and other useful info.
     """
-    text = ' ' + ' '.join(str(text).split())
-
-    tokenized_text = tokenizer.encode(text)
-    # Vocab ids
-    input_ids_original = tokenized_text.ids
-
+    encoded_dict = tokenizer.encode_plus(
+        text,                      # Sentence to encode.
+        add_special_tokens = True, # Add '[CLS]' and '[SEP]'
+        max_length = config.MAX_LEN,           # Pad & truncate all sentences.
+        padding = 'max_length',
+		return_attention_mask = True,   # Construct attn. masks.
+        return_tensors = 'pt',     # Return pytorch tensors.
+        truncation = True,
+    )
     # ----------------------------------
 
-    # Input for RoBERTa
-    input_ids = [0] + input_ids_original + [2]
-    # No token types in RoBERTa
-    token_type_ids = [0] + [0] * (len(input_ids_original) + 1)
+    # Input for BERT
+    input_ids = np.squeeze(encoded_dict['input_ids'],0)
     # Mask of input without padding
-    mask = [1] * len(token_type_ids)
-
-    # Input padding: new mask, token type ids, text offsets
-    padding_len = max_len - len(input_ids)
-    if padding_len > 0:
-        input_ids = input_ids + ([1] * padding_len)
-        mask = mask + ([0] * padding_len)
-        token_type_ids = token_type_ids + ([0] * padding_len)
+    mask = np.squeeze(encoded_dict['attention_mask'],0)
 
     return {'ids': input_ids,
             'mask': mask,
-            'token_type_ids': token_type_ids,
             'labels': [label]}
 
 
@@ -57,6 +50,4 @@ class CommonlitDataset:
 
         return {'ids': torch.tensor(data['ids'], dtype=torch.long),
                 'mask': torch.tensor(data['mask'], dtype=torch.long),
-                'token_type_ids': torch.tensor(data['token_type_ids'],
-                                               dtype=torch.long),
                 'labels': torch.tensor(data['labels'], dtype=torch.float),}
