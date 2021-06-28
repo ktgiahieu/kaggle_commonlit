@@ -22,12 +22,11 @@ else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
     
-    TOKENIZER_PATH = f'/content/{repo_name}/src/1st_level/roberta_tokenizer'
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
     SUB_FILE = f'/content/{repo_name}/data/sample_submission.csv'
-    MODEL_SAVE_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_classifier'
-    TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_classifier'
+    MODEL_SAVE_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_regression'
+    TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_regression'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
     #MODEL_CONFIG = 'huawei-noah/TinyBERT_General_4L_312D'

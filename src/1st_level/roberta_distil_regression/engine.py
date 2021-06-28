@@ -58,8 +58,8 @@ def eval_fn(data_loader, model, device):
                 model(ids=ids, mask=mask)
             loss = loss_fn(outputs, labels)
 
-            rmse_scores.update(torch.sqrt(loss), ids.size(0))
+            rmse_scores.update(torch.sqrt(loss).item(), ids.size(0))
             losses.update(loss.item(), ids.size(0))
-            tk0.set_postfix(loss=losses.avg, jaccard=jaccards.avg)
+            tk0.set_postfix(loss=losses.avg, rmse_scores=rmse_scores.avg)
     print(f'RMSE = {rmse_scores.avg}')
     return rmse_scores.avg
