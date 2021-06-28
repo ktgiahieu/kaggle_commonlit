@@ -36,7 +36,7 @@ def train_fn(data_loader, model, optimizer, device, epoch, writer, scheduler=Non
 
         losses.update(loss.item(), ids.size(0))
         tk0.set_postfix(loss=losses.avg)
-    writer.add_scalar('Loss/train', losses.sum, epoch)
+    writer.add_scalar('Loss/train', losses.avg, epoch)
 
 
 def eval_fn(data_loader, model, device, epoch, writer):
@@ -63,6 +63,6 @@ def eval_fn(data_loader, model, device, epoch, writer):
             losses.update(loss.item(), ids.size(0))
             tk0.set_postfix(loss=losses.avg, rmse_scores=rmse_scores.avg)
     
-    writer.add_scalar('Loss/val', losses.sum, epoch)
+    writer.add_scalar('Loss/val', losses.avg, epoch)
     print(f'RMSE = {rmse_scores.avg}')
     return rmse_scores.avg
