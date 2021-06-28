@@ -27,9 +27,10 @@ def train_fn(data_loader, model, optimizer, device, epoch, writer, scheduler=Non
 
         model.zero_grad()
         outputs = \
-            model(ids=ids, mask=mask)
+            model(ids, mask, labels=labels)
         
-        loss = loss_fn(outputs, labels)
+        # loss = loss_fn(outputs.logits, labels)
+        loss = outputs.loss
         loss.backward()
         optimizer.step()
         scheduler.step()
@@ -55,8 +56,9 @@ def eval_fn(data_loader, model, device, epoch, writer):
             labels = labels.to(device, dtype=torch.float)
 
             outputs = \
-                model(ids=ids, mask=mask)
-            loss = loss_fn(outputs, labels)
+                model(ids, mask,labels=labels)
+            # loss = loss_fn(outputs.logits, labels)
+            loss = outputs.loss
 
             losses.update(loss.item(), ids.size(0))
             tk0.set_postfix(loss=np.sqrt(losses.avg))
