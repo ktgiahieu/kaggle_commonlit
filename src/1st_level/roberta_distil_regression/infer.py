@@ -17,7 +17,7 @@ import utils
 def run():
     df_test = pd.read_csv(config.TEST_FILE)
     df_test.loc[:, 'label'] = 0
-    dfx.rename(columns={'excerpt': 'text'}, inplace=True)
+    df_test.rename(columns={'excerpt': 'text'}, inplace=True)
 
     device = torch.device('cuda')
     model_config = transformers.AutoConfig.from_pretrained(
@@ -34,9 +34,9 @@ def run():
         model.eval()
         fold_models.append(model)
 
-    test_dataset = dataset.ColeridgeDataset(
+    test_dataset = dataset.CommonlitDataset(
         texts=df_test.text.values,
-        dataset_labels=df_test.label.values)
+        labels=df_test.label.values)
 
     data_loader = torch.utils.data.DataLoader(
         test_dataset,
