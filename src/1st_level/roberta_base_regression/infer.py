@@ -18,21 +18,13 @@ def run():
     df_test.rename(columns={'excerpt': 'text'}, inplace=True)
 
     device = torch.device('cuda')
-    # model_config = transformers.AutoConfig.from_pretrained(
-    #     config.MODEL_CONFIG)
-    # model_config.output_hidden_states = True
+    model_config = transformers.AutoConfig.from_pretrained(
+        config.MODEL_CONFIG)
+    model_config.output_hidden_states = True
 
     fold_models = []
     for i in range(config.N_FOLDS):
-
-        # model = models.CommonlitModel(conf=model_config)
-        model = transformers.RobertaForSequenceClassification.from_pretrained(
-          config.MODEL_CONFIG,
-          num_labels = 1, # The number of output labels--2 for binary classification.
-                        # You can increase this for multi-class tasks.   
-          output_attentions = False, # Whether the model returns attentions weights.
-          output_hidden_states = False, # Whether the model returns all hidden-states.
-        )
+        model = models.CommonlitModel(conf=model_config)
         model.to(device)
         model.load_state_dict(torch.load(
             f'{config.TRAINED_MODEL_PATH}/model_{i}.bin'),
@@ -67,9 +59,9 @@ def run():
             outputs_folds = []
             for i in range(config.N_FOLDS):
                 outputs = \
-                  model(ids, mask)
+                  model(ids=ids, mask=mask)
 
-                outputs_folds.append(outputs.logits)
+                outputs_folds.append(outputs)
 
             outputs = sum(outputs_folds) / config.N_FOLDS
 

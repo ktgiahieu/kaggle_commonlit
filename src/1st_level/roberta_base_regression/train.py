@@ -43,18 +43,10 @@ def run(fold):
         shuffle=False)
 
     device = torch.device('cuda')
-    # model_config = transformers.AutoConfig.from_pretrained(
-    #     config.MODEL_CONFIG)
-    # model_config.output_hidden_states = True
-    # model = models.CommonlitModel(conf=model_config)
-    model = transformers.RobertaForSequenceClassification.from_pretrained(
-      config.MODEL_CONFIG,
-      num_labels = 1, # The number of output labels--2 for binary classification.
-                    # You can increase this for multi-class tasks.   
-      output_attentions = False, # Whether the model returns attentions weights.
-      output_hidden_states = False, # Whether the model returns all hidden-states.
-    )
-
+    model_config = transformers.AutoConfig.from_pretrained(
+        config.MODEL_CONFIG)
+    model_config.output_hidden_states = True
+    model = models.CommonlitModel(conf=model_config)
     model = model.to(device)
 
     num_train_steps = int(
