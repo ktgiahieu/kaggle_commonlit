@@ -27,8 +27,8 @@ else: #colab
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
     SUB_FILE = f'/content/{repo_name}/data/sample_submission.csv'
-    MODEL_SAVE_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_regression'
-    TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_regression'
+    MODEL_SAVE_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_regression_v2'
+    TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/roberta_distil_regression_v2'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
     MODEL_CONFIG = 'distilroberta-base'
@@ -36,13 +36,13 @@ else: #colab
 # Model params
 SEED = 25
 N_FOLDS = 5
-EPOCHS = 4
+EPOCHS = 10
 LEARNING_RATE = 5e-5
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 32
 VALID_BATCH_SIZE = 32
-MAX_LEN = 384  # actually = inf
+MAX_LEN = 64  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
