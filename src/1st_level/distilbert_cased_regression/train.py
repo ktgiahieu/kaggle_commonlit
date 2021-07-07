@@ -14,7 +14,7 @@ import engine
 import utils
 
 
-def run(fold):
+def run(fold, seed):
     dfx = pd.read_csv(config.TRAINING_FILE)
     
     dfx.rename(columns={'excerpt': 'text', 'target': 'label'}, inplace=True)
@@ -86,23 +86,24 @@ def run(fold):
         os.makedirs(f'{config.MODEL_SAVE_PATH}')
 
     torch.save(model.state_dict(),
-               f'{config.MODEL_SAVE_PATH}/model_{fold}.bin')
+               f'{config.MODEL_SAVE_PATH}/model_{fold}_{seed}.bin')
 
     return rmse_score
 
 
 if __name__ == '__main__':
-    utils.seed_everything(seed=config.SEED)
+    for seed in config.SEEDS:
+        utils.seed_everything(seed=seed)
+        print(f"Training with SEED={seed}")
+        fold_scores = []
+        for i in range(config.N_FOLDS):
+            writer = SummaryWriter(f"logs/fold{i}")
+            fold_score = run(i, seed)
+            fold_scores.append(fold_score)
+            writer.close()
 
-    fold_scores = []
-    for i in range(config.N_FOLDS):
-        writer = SummaryWriter(f"logs/fold{i}")
-        fold_score = run(i)
-        fold_scores.append(fold_score)
-        writer.close()
-
-    print('\nScores without SWA:')
-    for i in range(config.N_FOLDS):
-        print(f'Fold={i}, RMSE = {fold_scores[i]}')
-    print(f'Mean = {np.mean(fold_scores)}')
-    print(f'Std = {np.std(fold_scores)}')
+        print('\nScores without SWA:')
+        for i in range(config.N_FOLDS):
+            print(f'Fold={i}, RMSE = {fold_scores[i]}')
+        print(f'Mean = {np.mean(fold_scores)}')
+        print(f'Std = {np.std(fold_scores)}')

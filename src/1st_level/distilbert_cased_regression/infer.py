@@ -23,15 +23,18 @@ def run():
         config.MODEL_CONFIG)
     model_config.output_hidden_states = True
 
-    fold_models = []
+    all_models = []
     for i in range(config.N_FOLDS):
-        model = models.CommonlitModel(conf=model_config)
-        model.to(device)
-        model.load_state_dict(torch.load(
-            f'{config.TRAINED_MODEL_PATH}/model_{i}.bin'),
-            strict=False)
-        model.eval()
-        fold_models.append(model)
+        seed_models = []
+        for seed in config.SEEDS:
+            model = models.CommonlitModel(conf=model_config)
+            model.to(device)
+            model.load_state_dict(torch.load(
+                f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'),
+                strict=False)
+            model.eval()
+            seed_models.append(model)
+        all_models.extend(seed_models)
 
     test_dataset = dataset.CommonlitDataset(
         texts=df_test.text.values,
@@ -57,25 +60,26 @@ def run():
             labels = labels.to(device, dtype=torch.float)
 
 
-            outputs_folds = []
-            for i in range(config.N_FOLDS):
+            outputs_folds_seeds = []
+            for i in range(config.N_FOLDS * len(config.SEEDS)):
                 outputs = \
-                  fold_models[i](ids=ids, mask=mask)
+                  all_models[i](ids=ids, mask=mask)
 
-                outputs_folds.append(outputs)
+                outputs_folds_seeds.append(outputs)
 
-            outputs = sum(outputs_folds) / config.N_FOLDS
+            outputs = sum(outputs_folds_seeds) / (config.N_FOLDS * len(config.SEEDS))
 
             outputs = outputs.cpu().detach().numpy()
             predicted_labels.extend(outputs.squeeze(-1).tolist())
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')
-    
-    pickle_name = 'roberta-predicted_labels' if (len(sys.argv)<=1) else sys.argv[1]
+        
+    pickle_name = sys.argv[1]
     with open(f'{config.INFERED_PICKLE_PATH}/{pickle_name}.pkl', 'wb') as handle:
         pickle.dump(predicted_labels, handle)
 
 
 if __name__ == '__main__':
+    assert len(sys.argv) > 1, "Please specify output pickle name."
     run()

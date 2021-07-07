@@ -1,3 +1,4 @@
+import sys
 import os
 import pickle
 import torch
@@ -77,6 +78,7 @@ def run(fold):
 
 
 if __name__ == '__main__':
+    assert len(sys.argv) > 1, "Please specify output pickle name."
     utils.seed_everything(seed=config.SEEDS[0])
     fold_scores = []
     for i in range(config.N_FOLDS):
@@ -91,5 +93,6 @@ if __name__ == '__main__':
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')
 
-    with open(f'{config.INFERED_PICKLE_PATH}/predicted_valid.pkl', 'wb') as handle:
+    pickle_name = sys.argv[1]
+    with open(f'{config.INFERED_PICKLE_PATH}/{pickle_name}.pkl', 'wb') as handle:
         pickle.dump(predicted_labels, handle)

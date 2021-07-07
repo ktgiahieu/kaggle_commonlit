@@ -75,10 +75,11 @@ def run():
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')
         
-    pickle_name = 'distilbert-predicted_labels' if (len(sys.argv)<=1) else sys.argv[1]
+    pickle_name = sys.argv[1]
     with open(f'{config.INFERED_PICKLE_PATH}/{pickle_name}.pkl', 'wb') as handle:
         pickle.dump(predicted_labels, handle)
 
 
 if __name__ == '__main__':
+    assert len(sys.argv) > 1, "Please specify output pickle name."
     run()
