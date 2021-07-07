@@ -1,3 +1,4 @@
+import sys
 import pickle
 import os
 
@@ -71,7 +72,8 @@ def run():
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')
 
-    with open(f'{config.INFERED_PICKLE_PATH}/roberta-predicted_labels.pkl', 'wb') as handle:
+	pickle_name = 'roberta-predicted_labels' if (len(sys.argv)<=1) else sys.argv[1]
+    with open(f'{config.INFERED_PICKLE_PATH}/{pickle_name}.pkl', 'wb') as handle:
         pickle.dump(predicted_labels, handle)
     # with open(f'{config.INFERED_PICKLE_PATH}/roberta-char_pred_test_start.pkl', 'wb') as handle:
     #     pickle.dump(char_pred_test_start, handle)
