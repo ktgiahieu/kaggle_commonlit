@@ -75,10 +75,6 @@ def run():
 	pickle_name = 'roberta-predicted_labels' if (len(sys.argv)<=1) else sys.argv[1]
     with open(f'{config.INFERED_PICKLE_PATH}/{pickle_name}.pkl', 'wb') as handle:
         pickle.dump(predicted_labels, handle)
-    # with open(f'{config.INFERED_PICKLE_PATH}/roberta-char_pred_test_start.pkl', 'wb') as handle:
-    #     pickle.dump(char_pred_test_start, handle)
-    # with open(f'{config.INFERED_PICKLE_PATH}/roberta-char_pred_test_end.pkl', 'wb') as handle:
-    #     pickle.dump(char_pred_test_end, handle)
 
 
 if __name__ == '__main__':
