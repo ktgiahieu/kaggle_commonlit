@@ -59,7 +59,7 @@ def run():
             outputs_folds = []
             for i in range(config.N_FOLDS):
                 outputs = \
-                  model(ids=ids, mask=mask)
+                  fold_models[i](ids=ids, mask=mask)
 
                 outputs_folds.append(outputs)
 

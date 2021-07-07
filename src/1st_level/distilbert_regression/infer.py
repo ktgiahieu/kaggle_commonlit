@@ -24,6 +24,7 @@ def run():
 
     fold_models = []
     for i in range(config.N_FOLDS):
+        for seed in range(config.SEEDS):
         model = models.CommonlitModel(conf=model_config)
         model.to(device)
         model.load_state_dict(torch.load(
@@ -59,7 +60,7 @@ def run():
             outputs_folds = []
             for i in range(config.N_FOLDS):
                 outputs = \
-                  model(ids=ids, mask=mask)
+                  fold_models[i](ids=ids, mask=mask)
 
                 outputs_folds.append(outputs)
 
