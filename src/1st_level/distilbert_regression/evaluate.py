@@ -13,7 +13,7 @@ import dataset
 import engine
 predicted_labels = []
 
-def run(fold, seed):
+def run(fold):
     dfx = pd.read_csv(config.TRAINING_FILE)
     dfx.rename(columns={'excerpt': 'text', 'target': 'label'}, inplace=True)
     df_valid = dfx[dfx.kfold == fold].reset_index(drop=True)
