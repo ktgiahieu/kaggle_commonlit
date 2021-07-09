@@ -37,7 +37,7 @@ else: #colab
 # Model params
 SEEDS = [25, 42, 123]
 N_FOLDS = 5
-EPOCHS = 3
+EPOCHS = 4
 LEARNING_RATE = 2e-5
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
