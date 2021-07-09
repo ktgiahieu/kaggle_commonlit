@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 if is_kaggle:
     comp_name = 'commonlitreadabilityprize'
     my_impl = 'commonlit-impl'
-    my_model_dataset = 'commonlit-distilroberta-base-regression-v2'
+    my_model_dataset = 'commonlit-distilroberta-base-regression-v4'
 
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'distilroberta_base_regression_v2'
+    model_save = 'distilroberta_base_regression_v4'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -49,7 +49,8 @@ TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
 HIDDEN_SIZE = 768
-N_LAST_HIDDEN = 4
+ATTENTION_HIDDEN_SIZE = 512
+N_LAST_HIDDEN = 1
 BERT_DROPOUT = 0
 CLASSIFIER_DROPOUT = 0
 WARMUP_RATIO = 0.25

@@ -46,11 +46,9 @@ def run(fold, seed):
     model_config = transformers.AutoConfig.from_pretrained(
         config.MODEL_CONFIG)
     model_config.output_hidden_states = True
-    
     ##
-    model_config.hidden_dropout_prob = 0
+    model_config.hidden_dropout_prob = config.BERT_DROPOUT
     ##
-
     model = models.CommonlitModel(conf=model_config)
     model = model.to(device)
 
@@ -80,8 +78,9 @@ def run(fold, seed):
     print(f'Training is starting for fold={fold}')
 
     for epoch in range(config.EPOCHS):
-        rmse_score= engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
+        engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
                         device, epoch, writer, scheduler=scheduler)
+        rmse_score = engine.eval_fn(valid_data_loader, model, device, epoch, writer)
 
     if config.USE_SWA:
         optimizer.swap_swa_sgd()

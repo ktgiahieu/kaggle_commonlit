@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 if is_kaggle:
     comp_name = 'commonlitreadabilityprize'
     my_impl = 'commonlit-impl'
-    my_model_dataset = 'commonlit-distilroberta-base-regression'
+    my_model_dataset = 'commonlit-distilroberta-base-regression-v3'
 
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -60,3 +60,4 @@ SWA_RATIO = 0.9
 SWA_FREQ = 30
 
 SHOW_ITER_VAL = False
+NUM_SHOW_ITER = 20
