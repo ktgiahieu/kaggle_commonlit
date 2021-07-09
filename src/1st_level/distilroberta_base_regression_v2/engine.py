@@ -25,6 +25,7 @@ def train_fn(data_loader, valid_data_loader, model, optimizer, device, epoch, wr
         mask = mask.to(device, dtype=torch.long)
         labels = labels.to(device, dtype=torch.float)
 
+        model.train()
         model.zero_grad()
         outputs = \
             model(ids=ids, mask=mask)
