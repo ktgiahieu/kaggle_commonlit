@@ -60,7 +60,7 @@ def eval_iter(data_loader, model, device, iteration, writer):
 
             losses.update(loss.item(), ids.size(0))
     
-    writer.add_scalar('Loss/val iter', np.sqrt(losses.avg), iteration)
+    writer.add_scalar('Loss/val', np.sqrt(losses.avg), iteration)
     print(f'RMSE iter {iteration}= {np.sqrt(losses.avg)}')
     return np.sqrt(losses.avg)
 
