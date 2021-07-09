@@ -35,7 +35,7 @@ else: #colab
     MODEL_CONFIG = 'distilroberta-base'
 
 # Model params
-SEEDS = [25, 42, 123]
+SEEDS = [25]
 N_FOLDS = 5
 EPOCHS = 4
 LEARNING_RATE = 2e-5

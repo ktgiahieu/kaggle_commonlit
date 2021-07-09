@@ -75,7 +75,7 @@ def run(fold, seed):
     print(f'Training is starting for fold={fold}')
 
     for epoch in range(config.EPOCHS):
-        engine.train_fn(train_data_loader, model, optimizer,
+        engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
                         device, epoch, writer, scheduler=scheduler)
         rmse_score = engine.eval_fn(valid_data_loader, model, device, epoch, writer)
 
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         print(f"Training with SEED={seed}")
         fold_scores = []
         for i in range(config.N_FOLDS):
-            writer = SummaryWriter(f"logs/fold{i}")
+            writer = SummaryWriter(f"logs/fold{i}_seed{seed}")
             fold_score = run(i, seed)
             fold_scores.append(fold_score)
             writer.close()
