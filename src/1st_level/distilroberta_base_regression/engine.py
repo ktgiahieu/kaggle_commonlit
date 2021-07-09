@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import tqdm
 
+import config
 import utils
 
 
