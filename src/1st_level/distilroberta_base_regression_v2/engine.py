@@ -41,7 +41,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, epo
             eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)
     writer.add_scalar('Loss/train', np.sqrt(losses.avg), (epoch+1)*len(train_data_loader))
 
-    rmse_score = engine.eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
+    rmse_score = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
     return rmse_score
 
 def eval_fn(data_loader, model, device, iteration, writer):
