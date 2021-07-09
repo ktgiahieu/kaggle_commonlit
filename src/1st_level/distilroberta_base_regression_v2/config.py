@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'distilroberta_base_regression'
+    model_save = 'distilroberta_base_regression_v2'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -58,3 +58,4 @@ SWA_RATIO = 0.9
 SWA_FREQ = 30
 
 SHOW_ITER_VAL = False
+NUM_SHOW_ITER = 20

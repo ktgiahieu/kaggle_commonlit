@@ -80,9 +80,8 @@ def run(fold, seed):
     print(f'Training is starting for fold={fold}')
 
     for epoch in range(config.EPOCHS):
-        engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
+        rmse_score= engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
                         device, epoch, writer, scheduler=scheduler)
-        rmse_score = engine.eval_fn(valid_data_loader, model, device, epoch, writer)
 
     if config.USE_SWA:
         optimizer.swap_swa_sgd()

@@ -10,6 +10,14 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         self.automodel = transformers.AutoModel.from_pretrained(
             config.MODEL_CONFIG,
             config=conf)
+
+        self.attention = torch.nn.Sequential(            
+            torch.nn.Linear(config.HIDDEN_SIZE, 512),            
+            torch.nn.Tanh(),                       
+            torch.nn.Linear(512, 1),
+            torch.nn.Softmax(dim=1)
+        )   
+
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE, 1),
@@ -25,11 +33,21 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         # sequence_output of N_LAST_HIDDEN + Embedding states
         # (N_LAST_HIDDEN + 1, batch_size, num_tokens, 768)
         out = self.automodel(ids, attention_mask=mask)
+
+        # Mean-max pooler
         out = out.hidden_states
         out = torch.stack(
             tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean = torch.mean(out, dim=0)
         out_max, _ = torch.max(out, dim=0)
         out = torch.cat((out_mean, out_max), dim=-1)
+
+
+
+        #Self attention
+
+
+        #Multisample-Dropout
+
 
         return self.classifier(out[:, 0, :].squeeze(1))
