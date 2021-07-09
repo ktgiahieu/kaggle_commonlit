@@ -12,15 +12,15 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config=conf)
 
         self.attention = torch.nn.Sequential(            
-            torch.nn.Linear(config.HIDDEN_SIZE, 512),            
+            torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE),            
             torch.nn.Tanh(),                       
-            torch.nn.Linear(512, 1),
+            torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1),
             torch.nn.Softmax(dim=1)
         )   
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE, 1),
+            torch.nn.Linear(config.HIDDEN_SIZE*2, 1),
         )
         
         for layer in self.classifier:
@@ -40,14 +40,14 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean = torch.mean(out, dim=0)
         out_max, _ = torch.max(out, dim=0)
-        out = torch.cat((out_mean, out_max), dim=-1)
-
-
+        pooled_last_hidden_states = torch.cat((out_mean, out_max), dim=-1)
 
         #Self attention
+        weights = self.attention(pooled_last_hidden_states)
 
+        context_vector = torch.sum(weights * pooled_last_hidden_states, dim=1) 
 
         #Multisample-Dropout
+        ##
 
-
-        return self.classifier(out[:, 0, :].squeeze(1))
+        return self.classifier(context_vector)
