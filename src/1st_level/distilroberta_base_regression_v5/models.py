@@ -3,6 +3,24 @@ import transformers
 
 import config
 
+class SelfAttention(torch.nn.Module):
+    def __init__(self):
+        super(SelfAttention, self).__init__()
+        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE)          
+        self.tanh = torch.nn.Tanh()            
+        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
+        self.softmax = torch.nn.Softmax(dim=1)
+
+    def masked_vector(self, vector, mask):
+        return vector + (mask.unsqueeze(-1) + 1e-45).log()
+
+    def forward(self, x, mask):
+        out = self.linear1(x)
+        out = self.tanh(out)
+        out = self.linear2(out)
+        out = self.masked_vector(out, mask)
+        out = self.softmax(out)
+        return out
 
 class CommonlitModel(transformers.BertPreTrainedModel):
     def __init__(self, conf):
@@ -11,16 +29,11 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
-        self.attention = torch.nn.Sequential(            
-            torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE),            
-            torch.nn.Tanh(),                       
-            torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1),
-            torch.nn.Softmax(dim=1)
-        )   
+        self.attention = SelfAttention()
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE*2, 1),
+            torch.nn.Linear(config.HIDDEN_SIZE*4, 1),
         )
         
         for layer in self.classifier:
@@ -42,10 +55,11 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out_max, _ = torch.max(out, dim=0)
         pooled_last_hidden_states = torch.cat((out_mean, out_max), dim=-1)
 
-        #Self attention
-        weights = self.attention(pooled_last_hidden_states)
-
-        context_vector = torch.sum(weights * pooled_last_hidden_states, dim=1) 
+        #Self attention on word tokens
+        weights = self.attention(pooled_last_hidden_states[:,1:,:], mask)
+        word_vector = torch.sum(weights * pooled_last_hidden_states, dim=1) 
+        #Concat with CLS tokens
+        context_vector = torch.cat((pooled_last_hidden_states[:,0,:], word_vector), dim=-1)
 
         #Multisample-Dropout
         ##

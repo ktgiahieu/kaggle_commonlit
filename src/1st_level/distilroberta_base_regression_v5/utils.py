@@ -96,11 +96,3 @@ class AverageMeter:
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
-
-def masked_log_softmax(vector, mask, dim=-1):
-    if mask is not None:
-        mask = mask.float()
-        while mask.dim() < vector.dim():
-            mask = mask.unsqueeze(1)
-        vector = vector + (mask + 1e-45).log()
-    return torch.nn.functional.log_softmax(vector, dim=dim)
