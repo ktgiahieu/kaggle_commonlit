@@ -39,7 +39,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE*4, 2048),
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE*4, 1)
+            torch.nn.Linear(2048, 1)
         )
         
         for layer in self.classifier:
