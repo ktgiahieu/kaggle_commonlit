@@ -37,7 +37,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         #)
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE*4, 2048)
+            torch.nn.Linear(config.HIDDEN_SIZE*4, 2048),
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE*4, 1)
         )
