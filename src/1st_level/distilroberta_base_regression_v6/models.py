@@ -31,7 +31,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         self.attention = SelfAttention()
 
-        self.linear_compress = = torch.nn.Sequential(
+        self.linear_compress = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE*4, 128)
         )
