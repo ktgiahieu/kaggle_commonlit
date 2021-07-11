@@ -62,7 +62,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         pooled_last_hidden_states = torch.cat((out_mean, out_max), dim=-1)
 
         #Self attention
-        weights = self.attention(pooled_last_hidden_states)
+        weights = self.attention(pooled_last_hidden_states, mask)
 
         context_vector = torch.sum(weights * pooled_last_hidden_states, dim=1) 
 
