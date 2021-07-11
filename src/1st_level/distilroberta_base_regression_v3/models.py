@@ -24,7 +24,7 @@ class SelfAttention(torch.nn.Module):
         out = self.linear1(x)
         out = self.tanh(out)
         out = self.linear2(out)
-        out = masked_vector(out, mask)
+        out = self.masked_vector(out, mask)
         out = self.softmax(out)
         return out
 
