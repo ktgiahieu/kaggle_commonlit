@@ -12,7 +12,7 @@ class SelfAttention(torch.nn.Module):
         self.softmax = torch.nn.Softmax(dim=1)
 
     def masked_vector(self, vector, mask):
-        return vector + (mask + 1e-45).log()
+        return vector + (mask.unsqueeze(-1) + 1e-45).log()
 
     def forward(self, x, mask):
         out = self.linear1(x)
