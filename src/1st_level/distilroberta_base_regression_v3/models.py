@@ -11,7 +11,7 @@ class SelfAttention(torch.nn.Module):
         self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
         self.softmax = torch.nn.Softmax(dim=1)
 
-    def masked_vector(vector, mask):
+    def masked_vector(self, vector, mask):
         if mask is not None:
             mask = mask.float()
             print( mask.dim(),  mask.unsqueeze(1).dim(), vector.dim())
