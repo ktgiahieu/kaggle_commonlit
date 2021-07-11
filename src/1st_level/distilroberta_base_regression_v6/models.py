@@ -65,7 +65,6 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         ##
 
         #Add Document level features
-        print(context_vector.shape, document_features.shape, document_features.unsqueeze(1).shape)
-        context_and_document_vector = torch.cat((context_vector, document_features.unsqueeze(1)), dim=-1)
+        context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
 
         return self.classifier(context_and_document_vector)
