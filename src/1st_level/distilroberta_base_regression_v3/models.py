@@ -14,9 +14,9 @@ class SelfAttention(torch.nn.Module):
     def masked_vector(self, vector, mask):
         if mask is not None:
             mask = mask.float()
-            print( mask.shape,  mask.unsqueeze(1).shape, vector.shape)
+            print( mask.shape,  mask.unsqueeze(-1).shape, vector.shape)
             while mask.dim() < vector.dim():
-                mask = mask.unsqueeze(1)
+                mask = mask.unsqueeze(-1)
             vector = vector + (mask + 1e-45).log()
         return vector
 
