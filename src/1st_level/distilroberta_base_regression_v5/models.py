@@ -3,30 +3,6 @@ import transformers
 
 import config
 
-class SelfAttention(torch.nn.Module):
-    def __init__(self):
-        super(SelfAttention, self).__init__()
-        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE),            
-        self.tanh = torch.nn.Tanh(),                       
-        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1),
-        self.softmax = torch.nn.Softmax(dim=1)
-
-    def masked_vector(vector, mask):
-        if mask is not None:
-            mask = mask.float()
-            print( mask.dim(),  mask..unsqueeze(1).dim(), vector.dim())
-            while mask.dim() < vector.dim():
-                mask = mask.unsqueeze(1)
-            vector = vector + (mask + 1e-45).log()
-        return vector
-
-    def forward(self, x, mask):
-        out = self.linear1(x)
-        out = self.tanh(out)
-        out = self.linear2(out)
-        out = masked_vector(out, mask)
-        out = self.softmax(out)
-        return out
 
 class CommonlitModel(transformers.BertPreTrainedModel):
     def __init__(self, conf):
@@ -35,7 +11,12 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
-        self.attention = SelfAttention()
+        self.attention = torch.nn.Sequential(            
+            torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE),            
+            torch.nn.Tanh(),                       
+            torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1),
+            torch.nn.Softmax(dim=1)
+        )   
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
