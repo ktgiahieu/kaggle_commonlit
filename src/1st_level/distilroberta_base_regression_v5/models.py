@@ -57,7 +57,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         #Self attention on word tokens
         weights = self.attention(pooled_last_hidden_states[:,1:,:], mask)
-        word_vector = torch.sum(weights * pooled_last_hidden_states, dim=1) 
+        word_vector = torch.sum(weights * pooled_last_hidden_states[:,1:,:], dim=1) 
         #Concat with CLS tokens
         context_vector = torch.cat((pooled_last_hidden_states[:,0,:], word_vector), dim=-1)
 
