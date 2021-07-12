@@ -4,6 +4,12 @@ import textstat
 
 import config
 
+def rescale_linear(x, minimum, maximum):
+    """Rescale an arrary linearly."""
+    m = 2 / (maximum - minimum)
+    b = -1 - m * minimum
+    return m * x + b
+
 def process_data(text, label,
                  tokenizer, max_len):
     """Preprocesses one data sample and returns a dict
@@ -25,19 +31,19 @@ def process_data(text, label,
     # Mask of input without padding
     mask = np.squeeze(encoded_dict['attention_mask'],0)
 
-    document_features = [textstat.flesch_reading_ease(text),
-                        textstat.smog_index(text),
-                        textstat.flesch_kincaid_grade(text),
-                        textstat.coleman_liau_index(text),
-                        textstat.automated_readability_index(text),
-                        textstat.dale_chall_readability_score(text),
-                        textstat.difficult_words(text),
-                        textstat.linsear_write_formula(text),
-                        textstat.gunning_fog(text),
-                        textstat.fernandez_huerta(text),
-                        textstat.szigriszt_pazos(text),
-                        textstat.gutierrez_polini(text),
-                        textstat.crawford(text)]
+    document_features = [rescale_linear(textstat.flesch_reading_ease(text), -40, 120),
+                        rescale_linear(textstat.smog_index(text), -5, 30),
+                        rescale_linear(textstat.flesch_kincaid_grade(text), -5, 30),
+                        rescale_linear(textstat.coleman_liau_index(text), -5, 30),
+                        rescale_linear(textstat.automated_readability_index(text), -5, 30),
+                        rescale_linear(textstat.dale_chall_readability_score(text), 0   , 12),
+                        rescale_linear(textstat.difficult_words(text), 0, 70),
+                        rescale_linear(textstat.linsear_write_formula(text), 0, 30),
+                        rescale_linear(textstat.gunning_fog(text), 0, 30),
+                        rescale_linear(textstat.fernandez_huerta(text), 0, 140),
+                        rescale_linear(textstat.szigriszt_pazos(text), 0, 140),
+                        rescale_linear(textstat.gutierrez_polini(text), 0, 60),
+                        rescale_linear(textstat.crawford(text), -2, -7)]
 
     return {'ids': input_ids,
             'mask': mask,

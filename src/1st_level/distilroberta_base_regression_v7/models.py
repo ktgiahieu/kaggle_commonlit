@@ -69,15 +69,13 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         #Self attention on word tokens
         weights = self.attention(last_hidden_state, mask)
         context_vector = torch.sum(weights * last_hidden_state, dim=1) 
-        print(torch.max(context_vector), torch.min(context_vector))
-        print(context_vector)
-        #print(document_features)
-        #context_vector_compressed = self.linear_compress(context_vector)
+        print(document_features)
+        context_vector_compressed = self.linear_compress(context_vector)
 
         #Multisample-Dropout
         ##
 
         #Add Document level features
-        #context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
+        context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
 
-        return self.classifier(context_vector)
+        return self.classifier(context_and_document_vector)
