@@ -31,13 +31,11 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         self.attention = SelfAttention()
 
-        self.linear_compress = torch.nn.Sequential(
-            torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE*4, 2048)
-        )
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE + config.N_DOCUMENT_FEATURES, 1)
+            torch.nn.Linear(config.HIDDEN_SIZE + config.N_DOCUMENT_FEATURES, 512)
+            torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
+            torch.nn.Linear(512, 1)
         )
         
         for layer in self.linear_compress:
@@ -69,7 +67,6 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         #Self attention on word tokens
         weights = self.attention(last_hidden_state, mask)
         context_vector = torch.sum(weights * last_hidden_state, dim=1) 
-        context_vector_compressed = self.linear_compress(context_vector)
 
         #Multisample-Dropout
         ##
