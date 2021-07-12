@@ -51,20 +51,28 @@ def run(fold):
       
         tk0 = tqdm.tqdm(valid_data_loader, total=len(valid_data_loader))
         for bi, d in enumerate(tk0):
+            sentences_ids = d['sentences_ids']
+            sentences_mask = d['sentences_mask']
+            sentences_features = d['sentences_features']
             ids = d['ids']
             mask = d['mask']
-            labels = d['labels']
             document_features = d['document_features']
-
+            labels = d['labels']
+        
+            sentences_ids = sentences_ids.to(device, dtype=torch.long)
+            sentences_mask = sentences_mask.to(device, dtype=torch.long)
+            sentences_features = sentences_features.to(device, dtype=torch.float)
             ids = ids.to(device, dtype=torch.long)
             mask = mask.to(device, dtype=torch.long)
-            labels = labels.to(device, dtype=torch.float)
             document_features = document_features.to(device, dtype=torch.float)
+            labels = labels.to(device, dtype=torch.float)
 
             outputs_seeds = []
             for i in range(len(config.SEEDS)):
-                outputs = seed_models[i](ids=ids, mask=mask, document_features=document_features)
-
+                outputs = seed_models[i](ids=ids, mask=mask, document_features=document_features,
+                        sentences_ids=sentences_ids, 
+                        sentences_mask=sentences_mask, 
+                        sentences_features=sentences_features,)
                 outputs_seeds.append(outputs)
 
             outputs = sum(outputs_seeds) / len(config.SEEDS)

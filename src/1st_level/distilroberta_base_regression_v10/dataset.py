@@ -27,19 +27,10 @@ def process_data(text, label,
     )
     sentences_input_ids = sentences_encoded_dict['input_ids']
     sentences_mask = sentences_encoded_dict['attention_mask']
-    sentences_features = [rescale_linear(textstat.flesch_reading_ease(text), -40, 120),
-                    rescale_linear(textstat.smog_index(text), -5, 30),
-                    rescale_linear(textstat.flesch_kincaid_grade(text), -5, 30),
-                    rescale_linear(textstat.coleman_liau_index(text), -5, 30),
-                    rescale_linear(textstat.automated_readability_index(text), -5, 30),
-                    rescale_linear(textstat.dale_chall_readability_score(text), 0   , 12),
-                    rescale_linear(textstat.difficult_words(text), 0, 70),
-                    rescale_linear(textstat.linsear_write_formula(text), 0, 30),
-                    rescale_linear(textstat.gunning_fog(text), 0, 30),
-                    rescale_linear(textstat.fernandez_huerta(text), 0, 140),
-                    rescale_linear(textstat.szigriszt_pazos(text), 0, 140),
-                    rescale_linear(textstat.gutierrez_polini(text), 0, 60),
-                    rescale_linear(textstat.crawford(text), -2, -7)]
+    sentences_features = [
+                    rescale_linear(textstat.syllable_count(text), 0, 120),
+                    rescale_linear(textstat.lexicon_count(text, removepunct=True), 0, 120),
+                    ]
 
     encoded_dict = tokenizer.encode_plus(
         text,                      # Sentence to encode.
@@ -71,10 +62,14 @@ def process_data(text, label,
                         rescale_linear(textstat.gutierrez_polini(text), 0, 60),
                         rescale_linear(textstat.crawford(text), -2, -7)]
 
-    return {'ids': input_ids,
+    return {'sentences_ids': sentences_input_ids,
+            'sentences_mask': sentences_mask,
+            'sentences_features': sentences_features
+            'ids': input_ids,
             'mask': mask,
+            'document_features': document_features
             'labels': [label],
-            'document_features': document_features}
+            }
 
 
 class CommonlitDataset:
@@ -96,7 +91,11 @@ class CommonlitDataset:
                             self.tokenizer,
                             self.max_len)
 
-        return {'ids': torch.tensor(data['ids'], dtype=torch.long),
+        return {'sentences_ids': torch.tensor(data['sentences_ids'], dtype=torch.long),
+                'sentences_mask': torch.tensor(data['sentences_mask'], dtype=torch.long),
+                'sentences_features': torch.tensor(data['sentences_features'], dtype=torch.float),
+                'ids': torch.tensor(data['ids'], dtype=torch.long),
                 'mask': torch.tensor(data['mask'], dtype=torch.long),
+                'document_features': torch.tensor(data['document_features'], dtype=torch.float),
                 'labels': torch.tensor(data['labels'], dtype=torch.float),
-                'document_features': torch.tensor(data['document_features'], dtype=torch.float),}
+                }

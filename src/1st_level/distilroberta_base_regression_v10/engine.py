@@ -16,19 +16,29 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, epo
 
     tk0 = tqdm.tqdm(train_data_loader, total=len(train_data_loader))
     for bi, d in enumerate(tk0):
+        sentences_ids = d['sentences_ids']
+        sentences_mask = d['sentences_mask']
+        sentences_features = d['sentences_features']
         ids = d['ids']
         mask = d['mask']
-        labels = d['labels']
         document_features = d['document_features']
-
+        labels = d['labels']
+        
+        sentences_ids = sentences_ids.to(device, dtype=torch.long)
+        sentences_mask = sentences_mask.to(device, dtype=torch.long)
+        sentences_features = sentences_features.to(device, dtype=torch.float)
         ids = ids.to(device, dtype=torch.long)
         mask = mask.to(device, dtype=torch.long)
-        labels = labels.to(device, dtype=torch.float)
         document_features = document_features.to(device, dtype=torch.float)
+        labels = labels.to(device, dtype=torch.float)
+        
 
         model.train()
         model.zero_grad()
-        outputs = model(ids=ids, mask=mask, document_features=document_features)
+        outputs = model(ids=ids, mask=mask, document_features=document_features,
+                        sentences_ids=sentences_ids, 
+                        sentences_mask=sentences_mask, 
+                        sentences_features=sentences_features,)
         
         loss = loss_fn(outputs, labels)
         loss.backward()
@@ -51,17 +61,26 @@ def eval_fn(data_loader, model, device, iteration, writer):
 
     with torch.no_grad():
         for bi, d in enumerate(data_loader):
+            sentences_ids = d['sentences_ids']
+            sentences_mask = d['sentences_mask']
+            sentences_features = d['sentences_features']
             ids = d['ids']
             mask = d['mask']
-            labels = d['labels']
             document_features = d['document_features']
-
+            labels = d['labels']
+        
+            sentences_ids = sentences_ids.to(device, dtype=torch.long)
+            sentences_mask = sentences_mask.to(device, dtype=torch.long)
+            sentences_features = sentences_features.to(device, dtype=torch.float)
             ids = ids.to(device, dtype=torch.long)
             mask = mask.to(device, dtype=torch.long)
-            labels = labels.to(device, dtype=torch.float)
             document_features = document_features.to(device, dtype=torch.float)
+            labels = labels.to(device, dtype=torch.float)
 
-            outputs = model(ids=ids, mask=mask, document_features=document_features)
+            outputs = model(ids=ids, mask=mask, document_features=document_features,
+                            sentences_ids=sentences_ids, 
+                            sentences_mask=sentences_mask, 
+                            sentences_features=sentences_features,)
             loss = loss_fn(outputs, labels)
 
             losses.update(loss.item(), ids.size(0))
