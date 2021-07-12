@@ -29,7 +29,7 @@ def process_data(text, label,
     sentences_encoded_dict = tokenizer.batch_encode_plus(
         sentences,                      # Sentence to encode.
         add_special_tokens = True, # Add '[CLS]' and '[SEP]'
-        max_length = config.MAX_LEN,           # Pad & truncate all sentences.
+        max_length = config.MAX_LEN_SENTENCE,           # Pad & truncate all sentences.
         padding = 'max_length',
 		return_attention_mask = True,   # Construct attn. masks.
         return_tensors = 'pt',     # Return pytorch tensors.

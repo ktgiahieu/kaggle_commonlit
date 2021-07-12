@@ -46,9 +46,20 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
     def forward(self, ids, mask, document_features,
                         sentences_ids, sentences_mask, sentences_features):
-        # sequence_output of N_LAST_HIDDEN + Embedding states
-        # (N_LAST_HIDDEN + 1, batch_size, num_tokens, 768)
-        print(sentences_ids.shape, sentences_mask.shape, sentences_features.shape, )
+
+        #iterate through each excerpt, sent_ids is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE)
+        #sent_out.last_hidden_state is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE, HIDDEN_SIZE)
+        sentences_vector = []
+        for sent_ids, sent_mask, sent_features in zip(sentences_ids, sentences_mask, sentences_features):
+            sent_out = self.automodel(sent_ids, attention_mask=sent_mask)
+            sent_last_hidden_state = sent_out.last_hidden_state
+            sent_context_vector = sent_last_hidden_state[:,0,:]
+            context_and_sentence_vector = torch.cat((sent_context_vector, sent_features), dim=-1)
+            sentences_vector.append(torch.mean(context_and_sentence_vector, dim=0))
+            ## improve with masked
+        sentences_vector = torch.tensor(sentences_vector, dtype=torch.float)
+        print(sentences_vector.shape)
+
         out = self.automodel(ids, attention_mask=mask)
         last_hidden_state = out.last_hidden_state
 
@@ -59,5 +70,6 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         #Add Document level features
         context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
+
 
         return self.classifier(context_and_document_vector)
