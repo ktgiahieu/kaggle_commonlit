@@ -10,12 +10,22 @@ def rescale_linear(x, minimum, maximum):
     b = -1 - m * minimum
     return m * x + b
 
+def rescale_linear_zero(x, minimum, maximum):
+    """Rescale an arrary linearly."""
+    m = 1 / (maximum - minimum)
+    b = - m * minimum
+    return m * x + b
+
 def process_data(text, label,
                  tokenizer, max_len):
     """Preprocesses one data sample and returns a dict
     with targets and other useful info.
     """
     sentences = text.split('.')
+    while len(sentences) < config.MAX_N_SENTENCE:
+        sentences.append('')
+    if len(sentences) > config.MAX_N_SENTENCE:
+        sentences = sentences[:config.MAX_N_SENTENCE]
     sentences_encoded_dict = tokenizer.batch_encode_plus(
         sentences,                      # Sentence to encode.
         add_special_tokens = True, # Add '[CLS]' and '[SEP]'
@@ -27,10 +37,10 @@ def process_data(text, label,
     )
     sentences_input_ids = sentences_encoded_dict['input_ids']
     sentences_mask = sentences_encoded_dict['attention_mask']
-    sentences_features = [
-                    rescale_linear(textstat.syllable_count(text), 0, 120),
-                    rescale_linear(textstat.lexicon_count(text, removepunct=True), 0, 120),
-                    ]
+    sentences_features = torch.tensor([[
+                    rescale_linear_zero(textstat.syllable_count(x), 0, 120),
+                    rescale_linear_zero(textstat.lexicon_count(x, removepunct=True), 0, 120),
+                    ] for x in sentences], dtype=torch.float)
 
     encoded_dict = tokenizer.encode_plus(
         text,                      # Sentence to encode.
