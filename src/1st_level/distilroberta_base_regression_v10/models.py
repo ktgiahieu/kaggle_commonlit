@@ -58,8 +58,8 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             context_and_sentence_vector = torch.cat((sent_context_vector, sent_features), dim=-1)
             sentences_vector.append(torch.mean(context_and_sentence_vector, dim=0))
             ## improve with masked
-        sentences_vector = torch.tensor(sentences_vector, dtype=torch.float)
-        print(sentences_vector.shape)
+        #sentences_vector = torch.tensor(sentences_vector, dtype=torch.float)
+        print(sentences_vector)
 
         out = self.automodel(ids, attention_mask=mask)
         last_hidden_state = out.last_hidden_state
