@@ -48,6 +48,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
                         sentences_ids, sentences_mask, sentences_features):
         # sequence_output of N_LAST_HIDDEN + Embedding states
         # (N_LAST_HIDDEN + 1, batch_size, num_tokens, 768)
+        print(sentences_ids.shape, sentences_mask.shape, sentences_features.shape, )
         out = self.automodel(ids, attention_mask=mask)
         last_hidden_state = out.last_hidden_state
 
