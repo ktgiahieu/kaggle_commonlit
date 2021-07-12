@@ -31,20 +31,20 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         self.attention = SelfAttention()
 
-        #self.linear_compress = torch.nn.Sequential(
-        #    torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-        #    torch.nn.Linear(config.HIDDEN_SIZE*4, 2048)
-        #)
+        self.linear_compress = torch.nn.Sequential(
+            torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
+            torch.nn.Linear(config.HIDDEN_SIZE*4, 2048)
+        )
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE, 1)
         )
         
-        #for layer in self.linear_compress:
-        #    if isinstance(layer, torch.nn.Linear):
-        #        layer.weight.data.normal_(mean=0.0, std=0.02)
-        #        if layer.bias is not None:
-        #            layer.bias.data.zero_()
+        for layer in self.linear_compress:
+            if isinstance(layer, torch.nn.Linear):
+                layer.weight.data.normal_(mean=0.0, std=0.02)
+                if layer.bias is not None:
+                    layer.bias.data.zero_()
 
         for layer in self.classifier:
             if isinstance(layer, torch.nn.Linear):
