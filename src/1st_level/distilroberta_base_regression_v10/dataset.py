@@ -64,10 +64,10 @@ def process_data(text, label,
 
     return {'sentences_ids': sentences_input_ids,
             'sentences_mask': sentences_mask,
-            'sentences_features': sentences_features
+            'sentences_features': sentences_features,
             'ids': input_ids,
             'mask': mask,
-            'document_features': document_features
+            'document_features': document_features,
             'labels': [label],
             }
 
