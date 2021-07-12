@@ -37,12 +37,6 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(512, 1),
         )
-        
-        for layer in self.linear_compress:
-            if isinstance(layer, torch.nn.Linear):
-                layer.weight.data.normal_(mean=0.0, std=0.02)
-                if layer.bias is not None:
-                    layer.bias.data.zero_()
 
         for layer in self.classifier:
             if isinstance(layer, torch.nn.Linear):
