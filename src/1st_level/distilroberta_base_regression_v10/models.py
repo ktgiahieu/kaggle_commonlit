@@ -47,30 +47,36 @@ class CommonlitModel(transformers.BertPreTrainedModel):
     def forward(self, ids, mask, document_features,
                         sentences_ids, sentences_mask, sentences_features):
 
+        sentences_vector = []
         #iterate through each excerpt, sent_ids is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE)
         #sent_out.last_hidden_state is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE, HIDDEN_SIZE)
-        sentences_vector = []
         for sent_ids, sent_mask, sent_features in zip(sentences_ids, sentences_mask, sentences_features):
-            print(sent_ids.shape, sent_mask.shape, sent_features.shape)
             sent_out = self.automodel(sent_ids, attention_mask=sent_mask)
+
+            #get last hidden state <CLS> vector
             sent_last_hidden_state = sent_out.last_hidden_state
             sent_context_vector = sent_last_hidden_state[:,0,:]
-            context_and_sentence_vector = torch.cat((sent_context_vector, sent_features), dim=-1)
-            sentences_vector.append(torch.mean(context_and_sentence_vector, dim=0))
-            ## improve with masked
-        sentences_vector = torch.stack(sentences_vector, dim=0)
-        print(sentences_vector.shape)
 
+            #concat external features
+            context_and_sentence_vector = torch.cat((sent_context_vector, sent_features), dim=-1)
+
+            #Average of all sentences in a excerpt
+            ## improve with masked
+            ## improve with masked
+            ## improve with masked
+            sentences_vector.append(torch.mean(context_and_sentence_vector, dim=0))
+            
+        sentences_vector = torch.stack(sentences_vector, dim=0)
+
+        #The hold excerpt
         out = self.automodel(ids, attention_mask=mask)
         last_hidden_state = out.last_hidden_state
-
         context_vector = last_hidden_state[:,0,:]
 
         #Multisample-Dropout
         ##
 
-        #Add Document level features
-        context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
+        #Add Document level features, sentence level features
+        feature_vector = torch.cat((context_vector, document_features, sentences_vector), dim=-1)
 
-
-        return self.classifier(context_and_document_vector)
+        return self.classifier(feature_vector)
