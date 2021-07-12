@@ -37,7 +37,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         #)
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE + config.N_DOCUMENT_FEATURES, 1)
+            torch.nn.Linear(config.HIDDEN_SIZE, 1)
         )
         
         #for layer in self.linear_compress:
@@ -77,6 +77,6 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         ##
 
         #Add Document level features
-        context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
+        #context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
 
-        return self.classifier(context_and_document_vector)
+        return self.classifier(context_vector)
