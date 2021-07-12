@@ -51,6 +51,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         #sent_out.last_hidden_state is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE, HIDDEN_SIZE)
         sentences_vector = []
         for sent_ids, sent_mask, sent_features in zip(sentences_ids, sentences_mask, sentences_features):
+            print(sent_ids.shape, sent_mask.shape, sent_features.shape)
             sent_out = self.automodel(sent_ids, attention_mask=sent_mask)
             sent_last_hidden_state = sent_out.last_hidden_state
             sent_context_vector = sent_last_hidden_state[:,0,:]
