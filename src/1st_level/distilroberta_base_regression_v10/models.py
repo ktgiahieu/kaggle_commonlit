@@ -45,7 +45,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
                     layer.bias.data.zero_()
 
     def forward(self, ids, mask, document_features,
-                        sentences_ids, sentences_mask, sentences_features)):
+                        sentences_ids, sentences_mask, sentences_features):
         # sequence_output of N_LAST_HIDDEN + Embedding states
         # (N_LAST_HIDDEN + 1, batch_size, num_tokens, 768)
         out = self.automodel(ids, attention_mask=mask)
