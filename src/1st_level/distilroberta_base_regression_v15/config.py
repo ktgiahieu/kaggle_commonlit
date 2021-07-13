@@ -37,7 +37,7 @@ else: #colab
 # Model params
 SEEDS = [25, 42, 123]
 N_FOLDS = 5
-EPOCHS_P1 = 1
+EPOCHS_P1 = 2
 EPOCHS_P2 = 5
 LEARNING_RATE_P1 = 5e-5
 LEARNING_RATE_P2 = 4e-5
