@@ -35,6 +35,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE + config.N_DOCUMENT_FEATURES 
                           + config.HIDDEN_SIZE + config.N_SENTENCE_FEATURES, 1024),
+            torch.nn.Tanh(),
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(1024, 1),
         )
