@@ -52,8 +52,6 @@ def run(fold, seed):
     model = models.CommonlitModel(conf=model_config)
     model = model.to(device)
 
-    num_train_steps = int(
-        len(df_train) / config.TRAIN_BATCH_SIZE * config.EPOCHS)
     param_optimizer = list(model.named_parameters())
     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
     optimizer_parameters = [
@@ -63,29 +61,33 @@ def run(fold, seed):
         {'params': [p for n, p in param_optimizer
                     if any(nd in n for nd in no_decay)],
          'weight_decay': 0.0}]
+    num_train_steps_p1 = int(
+        len(df_train) / config.TRAIN_BATCH_SIZE * config.EPOCHS_P1)
     base_opt_p1 = transformers.AdamW(optimizer_parameters,
                                   lr=config.LEARNING_RATE_P1)
     optimizer_p1 = torchcontrib.optim.SWA(
         base_opt,
-        swa_start=int(num_train_steps * config.SWA_RATIO),
+        swa_start=int(num_train_steps_p1 * config.SWA_RATIO),
         swa_freq=config.SWA_FREQ,
         swa_lr=None)
     scheduler_p1 = transformers.get_linear_schedule_with_warmup(
         optimizer=optimizer_p1,
-        num_warmup_steps=int(num_train_steps * config.WARMUP_RATIO),
-        num_training_steps=num_train_steps)
+        num_warmup_steps=int(num_train_steps_p1 * config.WARMUP_RATIO),
+        num_training_steps=num_train_steps_p1)
 
+    num_train_steps_p2 = int(
+        len(df_train) / config.TRAIN_BATCH_SIZE * config.EPOCHS_P2)
     base_opt_p2 = transformers.AdamW(optimizer_parameters,
                                   lr=config.LEARNING_RATE_P2)
     optimizer_p2 = torchcontrib.optim.SWA(
         base_opt,
-        swa_start=int(num_train_steps * config.SWA_RATIO),
+        swa_start=int(num_train_steps_p2 * config.SWA_RATIO),
         swa_freq=config.SWA_FREQ,
         swa_lr=None)
     scheduler_p2 = transformers.get_linear_schedule_with_warmup(
         optimizer=optimizer_p2,
-        num_warmup_steps=int(num_train_steps * config.WARMUP_RATIO),
-        num_training_steps=num_train_steps)
+        num_warmup_steps=int(num_train_steps_p2 * config.WARMUP_RATIO),
+        num_training_steps=num_train_steps_p2)
 
     print(f'Training is starting for fold={fold}')
     print(f'Training phase 1')
