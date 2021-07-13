@@ -95,13 +95,14 @@ def run(fold, seed):
         for param in model.automodel.parameters():
             param.requires_grad = False
         rmse_score = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer_p1,
-                        device, epoch, writer, scheduler=scheduler)
+                        device, epoch, writer, scheduler=scheduler_p1)
+
     print(f'Training phase 2')
     for epoch in range(config.EPOCHS_P2):
         for param in model.automodel.parameters():
             param.requires_grad = True
         rmse_score = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer_p2,
-                        device, epoch, writer, scheduler=scheduler)
+                        device, config.EPOCHS_P1+epoch, writer, scheduler=scheduler_p2)
 
     if config.USE_SWA:
         optimizer.swap_swa_sgd()
