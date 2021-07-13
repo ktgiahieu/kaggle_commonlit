@@ -66,7 +66,7 @@ def run(fold, seed):
     base_opt_p1 = transformers.AdamW(optimizer_parameters,
                                   lr=config.LEARNING_RATE_P1)
     optimizer_p1 = torchcontrib.optim.SWA(
-        base_opt,
+        base_opt_p1,
         swa_start=int(num_train_steps_p1 * config.SWA_RATIO),
         swa_freq=config.SWA_FREQ,
         swa_lr=None)
@@ -80,7 +80,7 @@ def run(fold, seed):
     base_opt_p2 = transformers.AdamW(optimizer_parameters,
                                   lr=config.LEARNING_RATE_P2)
     optimizer_p2 = torchcontrib.optim.SWA(
-        base_opt,
+        base_opt_p2,
         swa_start=int(num_train_steps_p2 * config.SWA_RATIO),
         swa_freq=config.SWA_FREQ,
         swa_lr=None)
