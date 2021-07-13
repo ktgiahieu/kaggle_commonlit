@@ -34,10 +34,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE + config.N_DOCUMENT_FEATURES 
-                          + config.HIDDEN_SIZE + config.N_SENTENCE_FEATURES, 1024),
-            torch.nn.Tanh(),
-            torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(1024, 1),
+                          + config.HIDDEN_SIZE + config.N_SENTENCE_FEATURES, 1),
         )
 
         for layer in self.classifier:
