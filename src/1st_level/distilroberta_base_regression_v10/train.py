@@ -63,22 +63,42 @@ def run(fold, seed):
         {'params': [p for n, p in param_optimizer
                     if any(nd in n for nd in no_decay)],
          'weight_decay': 0.0}]
-    base_opt = transformers.AdamW(optimizer_parameters,
-                                  lr=config.LEARNING_RATE)
-    optimizer = torchcontrib.optim.SWA(
+    base_opt_p1 = transformers.AdamW(optimizer_parameters,
+                                  lr=config.LEARNING_RATE_P1)
+    optimizer_p1 = torchcontrib.optim.SWA(
         base_opt,
         swa_start=int(num_train_steps * config.SWA_RATIO),
         swa_freq=config.SWA_FREQ,
         swa_lr=None)
-    scheduler = transformers.get_linear_schedule_with_warmup(
-        optimizer=optimizer,
+    scheduler_p1 = transformers.get_linear_schedule_with_warmup(
+        optimizer=optimizer_p1,
+        num_warmup_steps=int(num_train_steps * config.WARMUP_RATIO),
+        num_training_steps=num_train_steps)
+
+    base_opt_p2 = transformers.AdamW(optimizer_parameters,
+                                  lr=config.LEARNING_RATE_P2)
+    optimizer_p2 = torchcontrib.optim.SWA(
+        base_opt,
+        swa_start=int(num_train_steps * config.SWA_RATIO),
+        swa_freq=config.SWA_FREQ,
+        swa_lr=None)
+    scheduler_p2 = transformers.get_linear_schedule_with_warmup(
+        optimizer=optimizer_p2,
         num_warmup_steps=int(num_train_steps * config.WARMUP_RATIO),
         num_training_steps=num_train_steps)
 
     print(f'Training is starting for fold={fold}')
-
-    for epoch in range(config.EPOCHS):
-        rmse_score = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
+    print(f'Training phase 1')
+    for epoch in range(config.EPOCHS_P1):
+        for param in model.automodel.parameters():
+            param.requires_grad = False
+        rmse_score = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer_p1,
+                        device, epoch, writer, scheduler=scheduler)
+    print(f'Training phase 2')
+    for epoch in range(config.EPOCHS_P2):
+        for param in model.automodel.parameters():
+            param.requires_grad = True
+        rmse_score = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer_p2,
                         device, epoch, writer, scheduler=scheduler)
 
     if config.USE_SWA:
