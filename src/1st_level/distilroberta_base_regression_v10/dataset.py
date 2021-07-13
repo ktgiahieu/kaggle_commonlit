@@ -41,6 +41,7 @@ def process_data(text, label,
                     rescale_linear_zero(textstat.syllable_count(x), 0, 120),
                     rescale_linear_zero(textstat.lexicon_count(x, removepunct=True), 0, 120),
                     ] for x in sentences], dtype=torch.float)
+    sentences_attention_mask = torch.sum(sentences_encoded_dict['attention_mask'], dim=1)>2
 
     encoded_dict = tokenizer.encode_plus(
         text,                      # Sentence to encode.
@@ -75,6 +76,7 @@ def process_data(text, label,
     return {'sentences_ids': sentences_input_ids,
             'sentences_mask': sentences_mask,
             'sentences_features': sentences_features,
+            'sentences_attention_mask': sentences_attention_mask,
             'ids': input_ids,
             'mask': mask,
             'document_features': document_features,
@@ -104,6 +106,7 @@ class CommonlitDataset:
         return {'sentences_ids': torch.tensor(data['sentences_ids'], dtype=torch.long),
                 'sentences_mask': torch.tensor(data['sentences_mask'], dtype=torch.long),
                 'sentences_features': torch.tensor(data['sentences_features'], dtype=torch.float),
+                'sentences_attention_mask': torch.tensor(data['sentences_attention_mask'], dtype=torch.long),
                 'ids': torch.tensor(data['ids'], dtype=torch.long),
                 'mask': torch.tensor(data['mask'], dtype=torch.long),
                 'document_features': torch.tensor(data['document_features'], dtype=torch.float),

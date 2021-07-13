@@ -53,6 +53,7 @@ def run(fold):
         for bi, d in enumerate(tk0):
             sentences_ids = d['sentences_ids']
             sentences_mask = d['sentences_mask']
+            sentences_attention_mask = d['sentences_attention_mask']
             sentences_features = d['sentences_features']
             ids = d['ids']
             mask = d['mask']
@@ -61,6 +62,7 @@ def run(fold):
         
             sentences_ids = sentences_ids.to(device, dtype=torch.long)
             sentences_mask = sentences_mask.to(device, dtype=torch.long)
+            sentences_attention_mask = sentences_attention_mask.to(device, dtype=torch.long)
             sentences_features = sentences_features.to(device, dtype=torch.float)
             ids = ids.to(device, dtype=torch.long)
             mask = mask.to(device, dtype=torch.long)
@@ -72,7 +74,8 @@ def run(fold):
                 outputs = seed_models[i](ids=ids, mask=mask, document_features=document_features,
                         sentences_ids=sentences_ids, 
                         sentences_mask=sentences_mask, 
-                        sentences_features=sentences_features,)
+                        sentences_features=sentences_features,
+                        sentences_attention_mask=sentences_attention_mask,)
                 outputs_seeds.append(outputs)
 
             outputs = sum(outputs_seeds) / len(config.SEEDS)

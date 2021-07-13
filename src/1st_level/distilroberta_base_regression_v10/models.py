@@ -47,12 +47,12 @@ class CommonlitModel(transformers.BertPreTrainedModel):
                     layer.bias.data.zero_()
 
     def forward(self, ids, mask, document_features,
-                        sentences_ids, sentences_mask, sentences_features):
+                        sentences_ids, sentences_mask, sentences_features, sentences_attention_mask):
 
         sentences_vector = []
         #iterate through each excerpt, sent_ids is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE)
         #sent_out.last_hidden_state is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE, HIDDEN_SIZE)
-        for sent_ids, sent_mask, sent_features in zip(sentences_ids, sentences_mask, sentences_features):
+        for sent_ids, sent_mask, sent_features, sent_attention_mask in zip(sentences_ids, sentences_mask, sentences_features, sentences_attention_mask):
             sent_out = self.automodel(sent_ids, attention_mask=sent_mask)
 
             #get last hidden state <CLS> vector
@@ -62,11 +62,10 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             #concat external features
             context_and_sentence_vector = torch.cat((sent_context_vector, sent_features), dim=-1)
 
-            #Average of all sentences in a excerpt
-            ## improve with masked
-            ## improve with masked
-            ## improve with masked
-            sentences_vector.append(torch.mean(context_and_sentence_vector, dim=0))
+            #Self attention
+            weights = self.attention(context_and_sentence_vector, sent_attention_mask)
+            sent_attentioned_vector = torch.sum(weights * context_and_sentence_vector, dim=0) 
+            sentences_vector.append(sent_attentioned_vector)
             
         sentences_vector = torch.stack(sentences_vector, dim=0)
 
