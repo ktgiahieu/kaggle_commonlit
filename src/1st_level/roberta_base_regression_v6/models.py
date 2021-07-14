@@ -38,12 +38,13 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
     def forward(self, ids, mask, document_features):
         out = self.automodel(ids, attention_mask=mask)
-        out = out.last_hidden_state
+        last_hidden_state = out.last_hidden_state
 
         #Self attention
-        weights = self.attention(out, mask)
+        weights = self.attention(last_hidden_state, mask)
 
-        context_vector = torch.sum(weights * out, dim=1) 
+        context_vector = torch.sum(weights * last_hidden_state, dim=1) 
+        print(context_vector.shape, document_features.shape)
         context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
 
         return self.classifier(context_vector)
