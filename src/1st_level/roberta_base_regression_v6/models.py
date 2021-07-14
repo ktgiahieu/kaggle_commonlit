@@ -44,7 +44,6 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         weights = self.attention(last_hidden_state, mask)
 
         context_vector = torch.sum(weights * last_hidden_state, dim=1) 
-        print(context_vector.shape, document_features.shape)
         context_and_document_vector = torch.cat((context_vector, document_features), dim=-1)
 
-        return self.classifier(context_vector)
+        return self.classifier(context_and_document_vector)
