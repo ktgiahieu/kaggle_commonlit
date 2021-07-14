@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 if is_kaggle:
     comp_name = 'commonlitreadabilityprize'
     my_impl = 'commonlit-impl'
-    my_model_dataset = 'commonlit-roberta-base-regression-v6'
+    my_model_dataset = 'commonlit-roberta-base-regression-v7'
 
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'roberta_base_regression_v6'
+    model_save = 'roberta_base_regression_v7'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -52,7 +52,6 @@ TOKENIZER = AutoTokenizer.from_pretrained(
 HIDDEN_SIZE = 768
 ATTENTION_HIDDEN_SIZE = 512
 N_LAST_HIDDEN = 4
-N_DOCUMENT_FEATURES = 13
 BERT_DROPOUT = 0
 CLASSIFIER_DROPOUT = 0
 WARMUP_RATIO = 0.125
