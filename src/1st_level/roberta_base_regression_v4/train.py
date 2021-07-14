@@ -85,9 +85,6 @@ def run(fold, seed):
     if config.USE_SWA:
         optimizer.swap_swa_sgd()
 
-    torch.save(model.state_dict(),
-               f'{config.MODEL_SAVE_PATH}/model_{fold}_{seed}.bin')
-
     return rmse_score
 
 
