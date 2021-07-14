@@ -112,15 +112,15 @@ def create_optimizer(model):
     parameters.append({"params": regressor_group})
 
     for layer_num, (name, params) in enumerate(roberta_parameters):
-        weight_decay = 0.0 if "bias" in name else 0.01
+        weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
 
-        lr = 2e-5
+        lr = config.LEARNING_RATES[0]
 
         if layer_num >= 69:        
-            lr = 5e-5
+            lr = config.LEARNING_RATES[1]
 
         if layer_num >= 133:
-            lr = 1e-4
+            lr = config.LEARNING_RATES[2]
 
         parameters.append({"params": params,
                            "weight_decay": weight_decay,
