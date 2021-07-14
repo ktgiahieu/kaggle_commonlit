@@ -52,7 +52,7 @@ def run(fold, seed):
     model = models.CommonlitModel(conf=model_config)
     model = model.to(device)
 
-    print(model)
+    print(list(model.named_parameters())[392:])
 
     num_train_steps = int(
         len(df_train) / config.TRAIN_BATCH_SIZE * config.EPOCHS)
