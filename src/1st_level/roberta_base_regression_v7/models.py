@@ -6,7 +6,7 @@ import config
 class SelfAttention(torch.nn.Module):
     def __init__(self):
         super(SelfAttention, self).__init__()
-        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
+        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE+config.N_SENTENCE_FEATURES, config.ATTENTION_HIDDEN_SIZE)          
         self.tanh = torch.nn.Tanh()            
         self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
         self.softmax = torch.nn.Softmax(dim=1)
@@ -33,17 +33,50 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE, 1),
+            torch.nn.Linear(config.HIDDEN_SIZE + config.N_DOCUMENT_FEATURES 
+                          + config.HIDDEN_SIZE + config.N_SENTENCE_FEATURES, 1024),
+            torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
+            torch.nn.Linear(1024, 1),
         )
 
-    def forward(self, ids, mask):
+        for layer in self.classifier:
+            if isinstance(layer, torch.nn.Linear):
+                layer.weight.data.normal_(mean=0.0, std=0.02)
+                if layer.bias is not None:
+                    layer.bias.data.zero_()
+
+    def forward(self, ids, mask, document_features,
+                        sentences_ids, sentences_mask, sentences_features, sentences_attention_mask):
+
+        sentences_vector = []
+        #iterate through each excerpt, sent_ids is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE)
+        #sent_out.last_hidden_state is of shape (MAX_N_SENTENCE, MAX_LEN_SENTENCE, HIDDEN_SIZE)
+        for sent_ids, sent_mask, sent_features, sent_attention_mask in zip(sentences_ids, sentences_mask, sentences_features, sentences_attention_mask):
+            sent_out = self.automodel(sent_ids, attention_mask=sent_mask)
+
+            #get last hidden state <CLS> vector
+            sent_last_hidden_state = sent_out.last_hidden_state
+            sent_context_vector = sent_last_hidden_state[:,0,:]
+
+            #concat external features
+            context_and_sentence_vector = torch.cat((sent_context_vector, sent_features), dim=-1)
+
+            #Self attention
+            weights = self.attention(context_and_sentence_vector, sent_attention_mask)
+            sent_attentioned_vector = torch.sum(weights * context_and_sentence_vector, dim=0) 
+            sentences_vector.append(sent_attentioned_vector)
+            
+        sentences_vector = torch.stack(sentences_vector, dim=0)
+
+        #The hold excerpt
         out = self.automodel(ids, attention_mask=mask)
-        out = out.last_hidden_state
+        last_hidden_state = out.last_hidden_state
+        context_vector = last_hidden_state[:,0,:]
 
-        #Self attention
-        weights = self.attention(out, mask)
+        #Multisample-Dropout
+        ##
 
-        context_vector = torch.sum(weights * out, dim=1) 
+        #Add Document level features, sentence level features
+        feature_vector = torch.cat((context_vector, document_features, sentences_vector), dim=-1)
 
-
-        return self.classifier(context_vector)
+        return self.classifier(feature_vector)
