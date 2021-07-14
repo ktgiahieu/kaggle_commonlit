@@ -63,8 +63,7 @@ def run(fold, seed):
         {'params': [p for n, p in param_optimizer
                     if any(nd in n for nd in no_decay)],
          'weight_decay': 0.0}]
-    base_opt = transformers.AdamW(optimizer_parameters,
-                                  lr=config.LEARNING_RATE)
+    base_opt = create_optimizer(model)
     optimizer = torchcontrib.optim.SWA(
         base_opt,
         swa_start=int(num_train_steps * config.SWA_RATIO),

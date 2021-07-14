@@ -96,3 +96,34 @@ class AverageMeter:
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
+
+def create_optimizer(model):
+    named_parameters = list(model.named_parameters())    
+    
+    roberta_parameters = named_parameters[:197]    
+    attention_parameters = named_parameters[199:203]
+    regressor_parameters = named_parameters[203:]
+        
+    attention_group = [params for (name, params) in attention_parameters]
+    regressor_group = [params for (name, params) in regressor_parameters]
+
+    parameters = []
+    parameters.append({"params": attention_group})
+    parameters.append({"params": regressor_group})
+
+    for layer_num, (name, params) in enumerate(roberta_parameters):
+        weight_decay = 0.0 if "bias" in name else 0.01
+
+        lr = 2e-5
+
+        if layer_num >= 69:        
+            lr = 5e-5
+
+        if layer_num >= 133:
+            lr = 1e-4
+
+        parameters.append({"params": params,
+                           "weight_decay": weight_decay,
+                           "lr": lr})
+
+    return AdamW(parameters)

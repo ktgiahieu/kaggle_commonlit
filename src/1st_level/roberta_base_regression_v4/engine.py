@@ -15,7 +15,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, epo
     losses = utils.AverageMeter()
 
 
-    EVAL_SCHEDULE = [(0.50, 16), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
+    EVAL_SCHEDULE = [(0.50, 143), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
     best_val_rmse = None
     step = 0
     last_eval_step = 0
