@@ -47,7 +47,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
             if step >= last_eval_step + eval_period:
                 val_rmse = eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)                           
                 last_eval_step = step
-                for rmse, period in EVAL_SCHEDULE:
+                for rmse, period in config.EVAL_SCHEDULE:
                     if val_rmse >= rmse:
                         eval_period = period
                         break                               
