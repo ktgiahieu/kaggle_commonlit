@@ -42,8 +42,8 @@ EPOCHS = 3
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 4
-VALID_BATCH_SIZE = 4
+TRAIN_BATCH_SIZE = 1
+VALID_BATCH_SIZE = 1
 MAX_LEN = 248  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
