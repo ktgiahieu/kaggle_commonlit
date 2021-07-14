@@ -34,6 +34,7 @@ else: #colab
 
     MODEL_CONFIG = 'roberta-base'
 
+EVAL_SCHEDULE = [(0.6, 140),(0.51, 40), (0.50, 20), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
 # Model params
 SEEDS = [25, 42, 123]
 N_FOLDS = 5
