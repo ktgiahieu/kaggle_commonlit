@@ -48,6 +48,7 @@ MAX_LEN = 248  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
+TOKENIZER.pad_token = TOKENIZER.eos_token
 
 HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
