@@ -101,9 +101,15 @@ class AverageMeter:
 def create_optimizer(model):
     named_parameters = list(model.named_parameters())    
     
-    roberta_parameters = named_parameters[:391]    
-    attention_parameters = named_parameters[391:395]
-    regressor_parameters = named_parameters[395:]
+    roberta_parameters = named_parameters[:410]    
+    attention_parameters = named_parameters[410:414]
+    regressor_parameters = named_parameters[414:]
+
+    print('attention')
+    print(attention_parameters)
+
+    print('regressor_parameters')
+    print(regressor_parameters)
         
     attention_group = [params for (name, params) in attention_parameters]
     regressor_group = [params for (name, params) in regressor_parameters]
@@ -117,10 +123,10 @@ def create_optimizer(model):
 
         lr = config.LEARNING_RATES[0]
 
-        if layer_num >= 133:        
+        if layer_num >= 138:        
             lr = config.LEARNING_RATES[1]
 
-        if layer_num >= 261:
+        if layer_num >= 274:
             lr = config.LEARNING_RATES[2]
 
         parameters.append({"params": params,
