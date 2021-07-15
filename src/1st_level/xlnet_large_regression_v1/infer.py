@@ -1,6 +1,7 @@
 import sys
 import pickle
 import os
+import gc
 
 import numpy as np
 import pandas as pd
@@ -32,11 +33,13 @@ def run():
         test_dataset,
         shuffle=False,
         batch_size=config.VALID_BATCH_SIZE,
-        num_workers=4)
+        num_workers=1)
     
     predicted_labels = []
     for i in range(config.N_FOLDS):  
         all_models = []
+        torch.cuda.empty_cache()
+        gc.collect()
         for seed in config.SEEDS:
             model = models.CommonlitModel(conf=model_config)
             model.to(device)
@@ -60,9 +63,9 @@ def run():
 
 
                 outputs_seeds = []
-                for i in range(len(config.SEEDS)):
+                for s in range(len(config.SEEDS)):
                     outputs = \
-                      all_models[i](ids=ids, mask=mask)
+                      all_models[s](ids=ids, mask=mask)
 
                     outputs_seeds.append(outputs)
 
@@ -71,8 +74,6 @@ def run():
                 outputs = outputs.cpu().detach().numpy()
                 predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
         predicted_labels.append(predicted_labels_per_fold)
-        del all_models
-        torch.cuda.empty_cache()
     predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
