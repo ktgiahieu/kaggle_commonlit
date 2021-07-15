@@ -40,7 +40,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out = self.automodel(ids, attention_mask=mask)
 
         # Mean-max pooler
-        out = out.hidden_states
+        out = out.decoder_hidden_states 
         out = torch.stack(
             tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean = torch.mean(out, dim=0)
