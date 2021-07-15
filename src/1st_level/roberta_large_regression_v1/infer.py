@@ -1,6 +1,7 @@
 import sys
 import pickle
 import os
+import gc
 
 import numpy as np
 import pandas as pd
@@ -38,6 +39,8 @@ def run():
     for i in range(config.N_FOLDS):  
         print(f'fold{i}')
         all_models = []
+        torch.cuda.empty_cache()
+        gc.collect()
         for seed in config.SEEDS:
             print(f'adding seed{seed}')
             model = models.CommonlitModel(conf=model_config)
