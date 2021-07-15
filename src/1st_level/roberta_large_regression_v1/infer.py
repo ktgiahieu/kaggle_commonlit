@@ -60,7 +60,7 @@ def run():
 
 
                 outputs_folds = []
-                for i in range(config.N_FOLDS)):
+                for i in range(config.N_FOLDS):
                     outputs = \
                       all_models[i](ids=ids, mask=mask)
 
