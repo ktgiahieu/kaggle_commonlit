@@ -35,10 +35,9 @@ def run():
         num_workers=4)
     
     predicted_labels = []
-
-    for seed in config.SEEDS:
+    for i in range(config.N_FOLDS):  
         all_models = []
-        for i in range(config.N_FOLDS):    
+        for seed in config.SEEDS:
             model = models.CommonlitModel(conf=model_config)
             model.to(device)
             model.load_state_dict(torch.load(
@@ -47,7 +46,7 @@ def run():
             model.eval()
             all_models.append(model)
 
-        predicted_labels_per_seed = []
+        predicted_labels_per_fold = []
         with torch.no_grad():
             tk0 = tqdm.tqdm(data_loader, total=len(data_loader))
             for bi, d in enumerate(tk0):
@@ -60,18 +59,18 @@ def run():
                 labels = labels.to(device, dtype=torch.float)
 
 
-                outputs_folds = []
-                for i in range(config.N_FOLDS):
+                outputs_seeds = []
+                for i in range(len(config.SEEDS)):
                     outputs = \
                       all_models[i](ids=ids, mask=mask)
 
-                    outputs_folds.append(outputs)
+                    outputs_seeds.append(outputs)
 
-                outputs = sum(outputs_folds) / (config.N_FOLDS)
+                outputs = sum(outputs_seeds) / (len(config.SEEDS))
 
                 outputs = outputs.cpu().detach().numpy()
-                predicted_labels_per_seed.extend(outputs.squeeze(-1).tolist())
-        predicted_labels.append(predicted_labels_per_seed)
+                predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
+        predicted_labels.append(predicted_labels_per_fold)
         del all_models
         torch.cuda.empty_cache()
     predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
