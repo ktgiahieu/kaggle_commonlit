@@ -32,7 +32,7 @@ def run():
         test_dataset,
         shuffle=False,
         batch_size=config.VALID_BATCH_SIZE,
-        num_workers=4)
+        num_workers=1)
     
     predicted_labels = []
     for i in range(config.N_FOLDS):  
@@ -72,13 +72,9 @@ def run():
                 outputs = sum(outputs_seeds) / (len(config.SEEDS))
 
                 outputs = outputs.cpu().detach().numpy()
-                #predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
-                del outputs
-                del outputs_seeds
-        #predicted_labels.append(predicted_labels_per_fold)
-
-        del all_models
-    #predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
+                predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
+        predicted_labels.append(predicted_labels_per_fold)
+    predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')
