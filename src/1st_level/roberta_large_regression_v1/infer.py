@@ -40,6 +40,8 @@ def run():
         texts=df_test.text.values,
         labels=df_test.label.values)
 
+    print(config.VALID_BATCH_SIZE)
+
     data_loader = torch.utils.data.DataLoader(
         test_dataset,
         shuffle=False,
