@@ -102,15 +102,16 @@ def create_optimizer(model):
     named_parameters = list(model.named_parameters())    
     
     roberta_parameters = named_parameters[:391]    
-    attention_parameters = named_parameters[391:395]
-    regressor_parameters = named_parameters[395:]
+    #attention_parameters = named_parameters[391:395]
+    #regressor_parameters = named_parameters[395:]
+    regressor_parameters = named_parameters[391:]
         
-    attention_group = [params for (name, params) in attention_parameters]
+    #attention_group = [params for (name, params) in attention_parameters]
     regressor_group = [params for (name, params) in regressor_parameters]
 
     parameters = []
-    parameters.append({"params": attention_group})
-    parameters.append({"params": regressor_group})
+    #parameters.append({"params": attention_group})
+    parameters.append({"params": regressor_group, "lr":config.REGRESSOR_LEARNING_RATE})
 
     for layer_num, (name, params) in enumerate(roberta_parameters):
         weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
