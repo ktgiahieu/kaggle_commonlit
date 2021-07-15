@@ -72,14 +72,13 @@ def run():
                 outputs = sum(outputs_seeds) / (len(config.SEEDS))
 
                 outputs = outputs.cpu().detach().numpy()
-                predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
-        predicted_labels.append(predicted_labels_per_fold)
-        for mod in all_models:
-            print(f'deleting')
-            mod = mod.cpu()
-            del mod
+                #predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
+                del outputs
+                del outputs_seeds
+        #predicted_labels.append(predicted_labels_per_fold)
+
         del all_models
-    predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
+    #predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')
