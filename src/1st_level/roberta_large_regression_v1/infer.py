@@ -2,6 +2,7 @@ import sys
 import pickle
 import os
 
+import numpy as np
 import pandas as pd
 import torch
 import transformers
@@ -71,7 +72,7 @@ def run():
                 outputs = outputs.cpu().detach().numpy()
                 predicted_labels_per_seed.extend(outputs.squeeze(-1).tolist())
         predicted_labels.append(predicted_labels_per_seed)
-    predicted_labels = np.sum(np.array(predicted_labels), axis=0).tolist()
+    predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')
