@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 if is_kaggle:
     comp_name = 'commonlitreadabilityprize'
     my_impl = 'commonlit-impl'
-    my_model_dataset = 'commonlit-albert-large-regression-v1'
+    my_model_dataset = 'commonlit-bart-large-regression-v1'
 
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -19,11 +19,11 @@ if is_kaggle:
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/albert-large-v2'
+    MODEL_CONFIG = '../input/bart-large'
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'albert_large_regression_v1'
+    model_save = 'bart_large_regression_v1'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -32,7 +32,7 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'albert-large-v2'
+    MODEL_CONFIG = 'facebook/bart-large'
 
 EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 16), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
 # Model params
@@ -64,7 +64,7 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Tuning hyperparams
-#ATTENTION_LEARNING_RATE = 5e-5
+ATTENTION_LEARNING_RATE = 5e-5
 REGRESSOR_LEARNING_RATE = 5e-5
 LEARNING_RATE = 1e-5
 WEIGHT_DECAY = 0.001
