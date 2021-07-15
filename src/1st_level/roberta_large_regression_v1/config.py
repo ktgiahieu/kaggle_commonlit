@@ -44,8 +44,6 @@ PATIENCE = None
 EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 8
 VALID_BATCH_SIZE = 8
-if is_kaggle:
-    VALID_BATCH_SIZE = 2
 MAX_LEN = 248  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
