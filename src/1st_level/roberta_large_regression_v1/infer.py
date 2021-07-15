@@ -73,6 +73,10 @@ def run():
                 outputs = outputs.cpu().detach().numpy()
                 predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
         predicted_labels.append(predicted_labels_per_fold)
+        for mod in all_models:
+            mod = mod.cpu()
+            del mod
+        del all_models
     predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
