@@ -104,13 +104,6 @@ def create_optimizer(model):
     albert_parameters = named_parameters[:25]    
     attention_parameters = named_parameters[25:29]
     regressor_parameters = named_parameters[29:]
-
-    print('attention')
-    print(attention_parameters)
-
-    print('regressor_parameters')
-    print(regressor_parameters)
-
         
     attention_group = [params for (name, params) in attention_parameters]
     regressor_group = [params for (name, params) in regressor_parameters]

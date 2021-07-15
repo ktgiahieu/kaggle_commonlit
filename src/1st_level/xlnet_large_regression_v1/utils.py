@@ -104,12 +104,6 @@ def create_optimizer(model):
     xlnet_parameters = named_parameters[:410]    
     attention_parameters = named_parameters[410:414]
     regressor_parameters = named_parameters[414:]
-
-    print('attention')
-    print(attention_parameters)
-
-    print('regressor_parameters')
-    print(regressor_parameters)
         
     attention_group = [params for (name, params) in attention_parameters]
     regressor_group = [params for (name, params) in regressor_parameters]
