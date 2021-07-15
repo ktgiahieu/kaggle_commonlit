@@ -115,13 +115,7 @@ def create_optimizer(model):
     for layer_num, (name, params) in enumerate(albert_parameters):
         weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
 
-        lr = config.LEARNING_RATES[0]
-
-        if layer_num >= 133:        
-            lr = config.LEARNING_RATES[1]
-
-        if layer_num >= 261:
-            lr = config.LEARNING_RATES[2]
+        lr = config.LEARNING_RATE
 
         parameters.append({"params": params,
                            "weight_decay": weight_decay,
