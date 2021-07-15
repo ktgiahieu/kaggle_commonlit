@@ -27,8 +27,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         super(CommonlitModel, self).__init__(conf)
         self.automodel = transformers.AutoModelForSequenceClassification.from_pretrained(
             config.MODEL_CONFIG,
-            config=conf,
-            num_labels=1)
+            config=conf)
 
         #self.attention = SelfAttention()
 
