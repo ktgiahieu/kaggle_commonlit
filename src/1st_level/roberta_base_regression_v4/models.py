@@ -6,9 +6,9 @@ import config
 class SelfAttention(torch.nn.Module):
     def __init__(self):
         super(SelfAttention, self).__init__()
-        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE*2)          
+        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
         self.tanh = torch.nn.Tanh()            
-        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE*2, 1)
+        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
         self.softmax = torch.nn.Softmax(dim=1)
 
     def masked_vector(self, vector, mask):
@@ -29,6 +29,8 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
+        self.attention = SelfAttention()
+
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE, 1),
@@ -36,8 +38,12 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
     def forward(self, ids, mask):
         out = self.automodel(ids, attention_mask=mask)
-        last_hidden_state = out.last_hidden_state
-        # Vector 0 pooler
-        context_vector = last_hidden_state[:,0,:]
+        out = out.last_hidden_state
+
+        #Self attention
+        weights = self.attention(out, mask)
+
+        context_vector = torch.sum(weights * out, dim=1) 
+
 
         return self.classifier(context_vector)
