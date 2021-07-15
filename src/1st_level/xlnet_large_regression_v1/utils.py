@@ -109,8 +109,8 @@ def create_optimizer(model):
     regressor_group = [params for (name, params) in regressor_parameters]
 
     parameters = []
-    parameters.append({"params": attention_group, "lr": config.LEARNING_RATES[2]})
-    parameters.append({"params": regressor_group, "lr": config.LEARNING_RATES[2]})
+    parameters.append({"params": attention_group, "lr": config.ATTENTION_LEARNING_RATE})
+    parameters.append({"params": regressor_group, "lr": config.REGRESSOR_LEARNING_RATE})
 
     for layer_num, (name, params) in enumerate(xlnet_parameters):
         weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
