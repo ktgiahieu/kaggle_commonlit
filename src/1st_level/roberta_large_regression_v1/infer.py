@@ -37,12 +37,10 @@ def run():
     
     predicted_labels = []
     for i in range(config.N_FOLDS):  
-        print(f'fold{i}')
         all_models = []
         torch.cuda.empty_cache()
         gc.collect()
         for seed in config.SEEDS:
-            print(f'adding seed{seed}')
             model = models.CommonlitModel(conf=model_config)
             model.to(device)
             model.load_state_dict(torch.load(
@@ -66,7 +64,6 @@ def run():
 
                 outputs_seeds = []
                 for s in range(len(config.SEEDS)):
-                    print(f'seed{config.SEEDS[s]}')
                     outputs = \
                       all_models[s](ids=ids, mask=mask)
 
