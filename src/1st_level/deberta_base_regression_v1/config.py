@@ -42,8 +42,8 @@ EPOCHS = 3
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 8
-VALID_BATCH_SIZE = 8
+TRAIN_BATCH_SIZE = 4
+VALID_BATCH_SIZE = 4
 MAX_LEN = 248  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
@@ -64,5 +64,5 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-LEARNING_RATES = [2e-5, 5e-5, 1e-4]
+LEARNING_RATES = [1e-5, 2e-5, 4e-5]
 WEIGHT_DECAY = 0.01
