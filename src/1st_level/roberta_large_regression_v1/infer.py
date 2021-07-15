@@ -39,6 +39,7 @@ def run():
         print(f'fold{i}')
         all_models = []
         for seed in config.SEEDS:
+            print(f'adding seed{seed}')
             model = models.CommonlitModel(conf=model_config)
             model.to(device)
             model.load_state_dict(torch.load(
@@ -62,7 +63,7 @@ def run():
 
                 outputs_seeds = []
                 for s in range(len(config.SEEDS)):
-                    print(f'seed{s}')
+                    print(f'seed{config.SEEDS[s]}')
                     outputs = \
                       all_models[s](ids=ids, mask=mask)
 
@@ -74,6 +75,7 @@ def run():
                 predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
         predicted_labels.append(predicted_labels_per_fold)
         for mod in all_models:
+            print(f'deleting')
             mod = mod.cpu()
             del mod
         del all_models
