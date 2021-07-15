@@ -34,7 +34,7 @@ else: #colab
 
     MODEL_CONFIG = 'microsoft/deberta-base'
 
-EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 16), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
+EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 16), (0.49, 12), (0.48, 8), (0.47, 6), (-1., 4)]
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
