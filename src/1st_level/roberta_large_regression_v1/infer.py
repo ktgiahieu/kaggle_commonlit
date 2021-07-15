@@ -23,7 +23,7 @@ def run():
         config.MODEL_CONFIG)
     model_config.output_hidden_states = True
 
-        test_dataset = dataset.CommonlitDataset(
+    test_dataset = dataset.CommonlitDataset(
         texts=df_test.text.values,
         labels=df_test.label.values)
 
