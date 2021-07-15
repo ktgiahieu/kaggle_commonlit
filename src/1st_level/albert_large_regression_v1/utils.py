@@ -119,7 +119,7 @@ def create_optimizer(model):
     parameters.append({"params": attention_group})
     parameters.append({"params": regressor_group})
 
-    for layer_num, (name, params) in enumerate(roberta_parameters):
+    for layer_num, (name, params) in enumerate(albert_parameters):
         weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
 
         lr = config.LEARNING_RATES[0]
