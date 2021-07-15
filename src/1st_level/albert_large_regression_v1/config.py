@@ -38,7 +38,7 @@ EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 16), (0.49, 8), (0.48, 4), (0.47, 
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 4
+EPOCHS = 5
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
@@ -64,5 +64,5 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-LEARNING_RATE = 1e-5
+LEARNING_RATE = 5e-6
 WEIGHT_DECAY = 0.01
