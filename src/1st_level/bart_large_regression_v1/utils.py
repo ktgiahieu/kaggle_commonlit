@@ -101,7 +101,7 @@ class AverageMeter:
 def create_optimizer(model):
     named_parameters = list(model.named_parameters())    
     
-    albert_parameters = named_parameters[:511]    
+    bart_parameters = named_parameters[:511]    
     #attention_parameters = named_parameters[25:29]
     #regressor_parameters = named_parameters[29:]
     regressor_parameters = named_parameters[511:]
@@ -113,7 +113,7 @@ def create_optimizer(model):
     #parameters.append({"params": attention_group, "lr": config.ATTENTION_LEARNING_RATE})
     parameters.append({"params": regressor_group, "lr": config.REGRESSOR_LEARNING_RATE})
 
-    for layer_num, (name, params) in enumerate(albert_parameters):
+    for layer_num, (name, params) in enumerate(bart_parameters):
         weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
 
         lr = config.LEARNING_RATE
