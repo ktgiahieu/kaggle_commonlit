@@ -36,6 +36,7 @@ def run():
     
     predicted_labels = []
     for i in range(config.N_FOLDS):  
+        print(f'fold{i}')
         all_models = []
         for seed in config.SEEDS:
             model = models.CommonlitModel(conf=model_config)
@@ -60,9 +61,10 @@ def run():
 
 
                 outputs_seeds = []
-                for i in range(len(config.SEEDS)):
+                for s in range(len(config.SEEDS)):
+                    print(f'seed{s}')
                     outputs = \
-                      all_models[i](ids=ids, mask=mask)
+                      all_models[s](ids=ids, mask=mask)
 
                     outputs_seeds.append(outputs)
 
