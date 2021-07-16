@@ -75,5 +75,5 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-LEARNING_RATES = [2e-5, 3e-5, 4e-5]
+LEARNING_RATES = [1e-5, 1.5e-5, 2e-5]
 WEIGHT_DECAY = 0.01
