@@ -39,11 +39,13 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
         
             loss = loss_fn(outputs, labels)
 
+            losses.update(loss.item(), ids.size(0))
+            tk0.set_postfix(loss=np.sqrt(losses.avg))
+
             loss = loss / config.ACCUMULATION_STEPS   
             loss.backward()
 
-            losses.update(loss.item(), ids.size(0))
-            tk0.set_postfix(loss=np.sqrt(losses.avg))
+
 
             if (bi+1) % config.ACCUMULATION_STEPS    == 0:             # Wait for several backward steps
                 optimizer.step()                            # Now we can do an optimizer step
