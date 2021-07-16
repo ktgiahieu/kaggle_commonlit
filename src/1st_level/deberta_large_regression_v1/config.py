@@ -34,7 +34,7 @@ else: #colab
 
     MODEL_CONFIG = 'microsoft/deberta-large'
 
-EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 24), (0.49, 16), (0.48, 8), (0.47, 4), (-1., 2)]
+
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
@@ -44,10 +44,21 @@ PATIENCE = None
 EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 1
 VALID_BATCH_SIZE = 1
+ACCUMULATION_STEPS = 8
 MAX_LEN = 248  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
+
+EVAL_SCHEDULE = [
+                (0.6, 70*ACCUMULATION_STEPS),
+                (0.51, 32*ACCUMULATION_STEPS), 
+                (0.50, 16*ACCUMULATION_STEPS), 
+                (0.49, 8*ACCUMULATION_STEPS), 
+                (0.48, 4*ACCUMULATION_STEPS), 
+                (0.47, 2*ACCUMULATION_STEPS), 
+                (-1., 1*ACCUMULATION_STEPS)
+                ]
 
 HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
@@ -64,5 +75,5 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-LEARNING_RATES = [2e-6, 5e-6, 1e-5]
+LEARNING_RATES = [2e-5, 3e-5, 4e-5]
 WEIGHT_DECAY = 0.01
