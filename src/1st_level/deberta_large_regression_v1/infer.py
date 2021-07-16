@@ -1,7 +1,9 @@
 import sys
 import pickle
 import os
+import gc
 
+import numpy as np
 import pandas as pd
 import torch
 import transformers
@@ -23,19 +25,6 @@ def run():
         config.MODEL_CONFIG)
     model_config.output_hidden_states = True
 
-    all_models = []
-    for i in range(config.N_FOLDS):
-        seed_models = []
-        for seed in config.SEEDS:
-            model = models.CommonlitModel(conf=model_config)
-            model.to(device)
-            model.load_state_dict(torch.load(
-                f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'),
-                strict=False)
-            model.eval()
-            seed_models.append(model)
-        all_models.extend(seed_models)
-
     test_dataset = dataset.CommonlitDataset(
         texts=df_test.text.values,
         labels=df_test.label.values)
@@ -44,33 +33,48 @@ def run():
         test_dataset,
         shuffle=False,
         batch_size=config.VALID_BATCH_SIZE,
-        num_workers=4)
+        num_workers=1)
     
     predicted_labels = []
+    for i in range(config.N_FOLDS):  
+        all_models = []
+        torch.cuda.empty_cache()
+        gc.collect()
+        for seed in config.SEEDS:
+            model = models.CommonlitModel(conf=model_config)
+            model.to(device)
+            model.load_state_dict(torch.load(
+                f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'),
+                strict=False)
+            model.eval()
+            all_models.append(model)
 
-    with torch.no_grad():
-        tk0 = tqdm.tqdm(data_loader, total=len(data_loader))
-        for bi, d in enumerate(tk0):
-            ids = d['ids']
-            mask = d['mask']
-            labels = d['labels']
+        predicted_labels_per_fold = []
+        with torch.no_grad():
+            tk0 = tqdm.tqdm(data_loader, total=len(data_loader))
+            for bi, d in enumerate(tk0):
+                ids = d['ids']
+                mask = d['mask']
+                labels = d['labels']
 
-            ids = ids.to(device, dtype=torch.long)
-            mask = mask.to(device, dtype=torch.long)
-            labels = labels.to(device, dtype=torch.float)
+                ids = ids.to(device, dtype=torch.long)
+                mask = mask.to(device, dtype=torch.long)
+                labels = labels.to(device, dtype=torch.float)
 
 
-            outputs_folds_seeds = []
-            for i in range(config.N_FOLDS * len(config.SEEDS)):
-                outputs = \
-                  all_models[i](ids=ids, mask=mask)
+                outputs_seeds = []
+                for s in range(len(config.SEEDS)):
+                    outputs = \
+                      all_models[s](ids=ids, mask=mask)
 
-                outputs_folds_seeds.append(outputs)
+                    outputs_seeds.append(outputs)
 
-            outputs = sum(outputs_folds_seeds) / (config.N_FOLDS * len(config.SEEDS))
+                outputs = sum(outputs_seeds) / (len(config.SEEDS))
 
-            outputs = outputs.cpu().detach().numpy()
-            predicted_labels.extend(outputs.squeeze(-1).tolist())
+                outputs = outputs.cpu().detach().numpy()
+                predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
+        predicted_labels.append(predicted_labels_per_fold)
+    predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
         os.makedirs(f'{config.INFERED_PICKLE_PATH}')
