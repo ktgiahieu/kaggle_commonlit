@@ -127,4 +127,4 @@ def create_optimizer(model):
                            "weight_decay": weight_decay,
                            "lr": lr})
 
-    return torch.optim.AdamW(parameters)
+    return torch.optim.AdamW(parameters, eps=1e-06)
