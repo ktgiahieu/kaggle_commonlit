@@ -34,14 +34,6 @@ else: #colab
 
     MODEL_CONFIG = 'xlnet-large-cased'
 
-EVAL_SCHEDULE = [
-                (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 16*ACCUMULATION_STEPS), 
-                (0.49, 8*ACCUMULATION_STEPS), 
-                (0.48, 4*ACCUMULATION_STEPS), 
-                (0.47, 2*ACCUMULATION_STEPS), 
-                (-1., 1*ACCUMULATION_STEPS)
-                ]
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
@@ -53,6 +45,15 @@ TRAIN_BATCH_SIZE = 8
 VALID_BATCH_SIZE = 8
 ACCUMULATION_STEPS = 2
 MAX_LEN = 248  # actually = inf
+
+EVAL_SCHEDULE = [
+                (0.6, 70*ACCUMULATION_STEPS),
+                (0.50, 16*ACCUMULATION_STEPS), 
+                (0.49, 8*ACCUMULATION_STEPS), 
+                (0.48, 4*ACCUMULATION_STEPS), 
+                (0.47, 2*ACCUMULATION_STEPS), 
+                (-1., 1*ACCUMULATION_STEPS)
+                ]
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
