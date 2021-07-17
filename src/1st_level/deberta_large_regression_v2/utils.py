@@ -101,32 +101,30 @@ class AverageMeter:
 def create_optimizer(model):
     named_parameters = list(model.named_parameters())    
     
-    xlnet_parameters = named_parameters[:410]    
-    #attention_parameters = named_parameters[410:414]
-    #regressor_parameters = named_parameters[414:]
-    regressor_parameters = named_parameters[410:]
-
+    deberta_parameters = named_parameters[:388]    
+    attention_parameters = named_parameters[388:392]
+    regressor_parameters = named_parameters[392:]
         
-    #attention_group = [params for (name, params) in attention_parameters]
+    attention_group = [params for (name, params) in attention_parameters]
     regressor_group = [params for (name, params) in regressor_parameters]
 
     parameters = []
-    #parameters.append({"params": attention_group, "lr": config.ATTENTION_LEARNING_RATE})
-    parameters.append({"params": regressor_group, "lr": config.REGRESSOR_LEARNING_RATE})
+    parameters.append({"params": attention_group})
+    parameters.append({"params": regressor_group})
 
-    for layer_num, (name, params) in enumerate(xlnet_parameters):
+    for layer_num, (name, params) in enumerate(deberta_parameters):
         weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
 
         lr = config.LEARNING_RATES[0]
 
-        #if layer_num >= 138:        
-        #    lr = config.LEARNING_RATES[1]
+        if layer_num >= 131:        
+            lr = config.LEARNING_RATES[1]
 
-        #if layer_num >= 274:
-        #    lr = config.LEARNING_RATES[2]
+        if layer_num >= 259:
+            lr = config.LEARNING_RATES[2]
 
         parameters.append({"params": params,
                            "weight_decay": weight_decay,
                            "lr": lr})
 
-    return torch.optim.AdamW(parameters)
+    return torch.optim.AdamW(parameters, eps=1e-06)
