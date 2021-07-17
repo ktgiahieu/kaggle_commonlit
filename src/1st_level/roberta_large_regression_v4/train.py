@@ -101,8 +101,8 @@ if __name__ == '__main__':
             fold_scores.append(fold_score)
             writer.close()
 
-        print('\nScores without SWA:')
-        for i in range(config.N_FOLDS):
-            print(f'Fold={i}, RMSE = {fold_scores[i]}')
-        print(f'Mean = {np.mean(fold_scores)}')
-        print(f'Std = {np.std(fold_scores)}')
+        #print('\nScores without SWA:')
+        #for i in range(config.N_FOLDS):
+        #    print(f'Fold={i}, RMSE = {fold_scores[i]}')
+        #print(f'Mean = {np.mean(fold_scores)}')
+        #print(f'Std = {np.std(fold_scores)}')
