@@ -6,9 +6,9 @@ import config
 class SelfAttention(torch.nn.Module):
     def __init__(self):
         super(SelfAttention, self).__init__()
-        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE*2)          
+        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
         self.tanh = torch.nn.Tanh()            
-        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE*2, 1)
+        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
         self.softmax = torch.nn.Softmax(dim=1)
 
     def masked_vector(self, vector, mask):
