@@ -32,7 +32,7 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'xlnet-large-cased'
+    MODEL_CONFIG = 'xlnet-base-cased'
 
 # Model params
 SEEDS = [1000, 25, 42]
@@ -75,5 +75,5 @@ NUM_SHOW_ITER = 20
 #Tuning hyperparams
 #ATTENTION_LEARNING_RATE = 5e-5
 REGRESSOR_LEARNING_RATE = 1e-3
-LEARNING_RATES = [0, 8e-6]
+LEARNING_RATES = [0, 2e-5]
 WEIGHT_DECAY = 0.01
