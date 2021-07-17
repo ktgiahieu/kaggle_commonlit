@@ -32,12 +32,12 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'xlnet-base-cased'
+    MODEL_CONFIG = 'xlnet-large-cased'
 
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 4
+EPOCHS = 7
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
@@ -58,8 +58,8 @@ EVAL_SCHEDULE = [
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
-HIDDEN_SIZE = 768
-ATTENTION_HIDDEN_SIZE = 768
+HIDDEN_SIZE = 1024
+ATTENTION_HIDDEN_SIZE = 1024
 N_LAST_HIDDEN = 4
 BERT_DROPOUT = 0
 CLASSIFIER_DROPOUT = 0
@@ -75,5 +75,5 @@ NUM_SHOW_ITER = 20
 #Tuning hyperparams
 #ATTENTION_LEARNING_RATE = 5e-5
 REGRESSOR_LEARNING_RATE = 1e-3
-LEARNING_RATES = [5e-5, 5e-5]
+LEARNING_RATES = [0, 8e-6]
 WEIGHT_DECAY = 0.01
