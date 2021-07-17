@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import tqdm
+import gc
 
 import config
 import utils
@@ -21,6 +22,8 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
         tk0 = tqdm.tqdm(train_data_loader, total=len(train_data_loader))
         model.zero_grad()
         for bi, d in enumerate(tk0):
+            torch.cuda.empty_cache()
+            gc.collect()
             ids = d['ids']
             mask = d['mask']
             labels = d['labels']
