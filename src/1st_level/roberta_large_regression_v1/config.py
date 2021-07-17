@@ -11,6 +11,8 @@ if is_kaggle:
     comp_name = 'commonlitreadabilityprize'
     my_impl = 'commonlit-impl'
     my_model_dataset = 'commonlit-roberta-large-regression-v1'
+    if not os.path.isdir(f'../input/{my_model_dataset}'):
+        my_model_dataset = my_model_dataset + '-notebook'
 
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
