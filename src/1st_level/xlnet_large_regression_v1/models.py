@@ -6,9 +6,9 @@ import config
 class SelfAttention(torch.nn.Module):
     def __init__(self):
         super(SelfAttention, self).__init__()
-        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE*2)          
+        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
         self.tanh = torch.nn.Tanh()            
-        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE*2, 1)
+        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
         self.softmax = torch.nn.Softmax(dim=1)
 
     def masked_vector(self, vector, mask):
@@ -25,16 +25,18 @@ class SelfAttention(torch.nn.Module):
 class CommonlitModel(transformers.BertPreTrainedModel):
     def __init__(self, conf):
         super(CommonlitModel, self).__init__(conf)
-        self.automodel = transformers.AutoModelForSequenceClassification.from_pretrained(
+        self.automodel = transformers.AutoModel.from_pretrained(
             config.MODEL_CONFIG,
             config=conf)
 
-        #self.attention = SelfAttention()
+        self.attention = SelfAttention()
 
-        #self.classifier = torch.nn.Sequential(
-        #    torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-        #    torch.nn.Linear(config.HIDDEN_SIZE*2, 1),
-        #)
+        self.classifier = torch.nn.Sequential(
+            torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
+            torch.nn.Linear(config.HIDDEN_SIZE, config.HIDDEN_SIZE),
+            torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
+            torch.nn.Linear(config.HIDDEN_SIZE, 1),
+        )
 
     def forward(self, ids, mask):
         out = self.automodel(ids, attention_mask=mask)
@@ -48,8 +50,11 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         #pooled_last_hidden_states = torch.cat((out_mean, out_max), dim=-1)
 
         #Self attention
-        #weights = self.attention(pooled_last_hidden_states, mask)
+        #weights = self.attention(pooled_last_hidden_states[:,0,:], mask)
         #context_vector = torch.sum(weights * pooled_last_hidden_states, dim=1) 
 
-        #return self.classifier(context_vector)
-        return out.logits
+        last_hidden_state = out.last_hidden_state
+        weights = self.attention(last_hidden_state, mask)
+        context_vector = torch.sum(weights * last_hidden_state, dim=1) 
+
+        return self.classifier(context_vector)
