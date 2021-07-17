@@ -29,7 +29,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
-        #self.attention = SelfAttention()
+        self.attention = SelfAttention()
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
@@ -53,6 +53,8 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         #weights = self.attention(pooled_last_hidden_states[:,0,:], mask)
         #context_vector = torch.sum(weights * pooled_last_hidden_states, dim=1) 
 
-        context_vector = out.last_hidden_state[:,0,:]
+        last_hidden_state = out.last_hidden_state
+        weights = self.attention(last_hidden_state, mask)
+        context_vector = torch.sum(weights * last_hidden_state, dim=1) 
 
         return self.classifier(context_vector)
