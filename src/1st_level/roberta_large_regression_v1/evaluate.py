@@ -1,25 +1,55 @@
-import numpy as np
+import sys
+import os
+import pickle
 import torch
-import tqdm
+import numpy as np
+import pandas as pd
+import transformers
+import tqdm.autonotebook as tqdm
 
-import config
 import utils
+import config
+import models
+import dataset
+import engine
+predicted_labels = []
 
+def run(fold):
+    dfx = pd.read_csv(config.TRAINING_FILE)
+    dfx.rename(columns={'excerpt': 'text', 'target': 'label'}, inplace=True)
+    df_valid = dfx[dfx.kfold == fold].reset_index(drop=True)
 
-def loss_fn(outputs, labels):
-    loss_fct = torch.nn.MSELoss()
-    return loss_fct(outputs, labels)
+    device = torch.device('cuda')
+    model_config = transformers.AutoConfig.from_pretrained(
+        config.MODEL_CONFIG)
+    model_config.output_hidden_states = True
 
+    seed_models = []
+    for seed in config.SEEDS:
+        model = models.CommonlitModel(conf=model_config)
+        model.to(device)
+        model.load_state_dict(torch.load(
+            f'{config.TRAINED_MODEL_PATH}/model_{fold}_{seed}.bin'),
+            strict=False)
+        model.eval()
+        seed_models.append(model)
 
-def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, writer, model_path, scheduler=None):
-    best_val_rmse = None
-    step = 0
-    last_eval_step = 0
-    eval_period = config.EVAL_SCHEDULE[0][1]   
-    for epoch in range(config.EPOCHS):
-        losses = utils.AverageMeter()
-        tk0 = tqdm.tqdm(train_data_loader, total=len(train_data_loader))
-        model.zero_grad()
+    valid_dataset = dataset.CommonlitDataset(
+        texts=df_valid.text.values,
+        labels=df_valid.label.values)
+
+    valid_data_loader = torch.utils.data.DataLoader(
+        valid_dataset,
+        batch_size=config.VALID_BATCH_SIZE,
+        num_workers=4,
+        shuffle=False)
+
+    
+    losses = utils.AverageMeter()
+
+    with torch.no_grad():
+      
+        tk0 = tqdm.tqdm(valid_data_loader, total=len(valid_data_loader))
         for bi, d in enumerate(tk0):
             ids = d['ids']
             mask = d['mask']
@@ -29,68 +59,40 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
             mask = mask.to(device, dtype=torch.long)
             labels = labels.to(device, dtype=torch.float)
 
-            model.train()
-            
-            outputs = \
-                model(ids=ids, mask=mask)
-        
-            loss = loss_fn(outputs, labels)
+            outputs_seeds = []
+            for i in range(len(config.SEEDS)):
+                outputs = seed_models[i](ids=ids, mask=mask)
 
+                outputs_seeds.append(outputs)
+
+            outputs = sum(outputs_seeds) / len(config.SEEDS)
+            
+            loss = engine.loss_fn(outputs, labels)
             losses.update(loss.item(), ids.size(0))
             tk0.set_postfix(loss=np.sqrt(losses.avg))
 
-            loss = loss / config.ACCUMULATION_STEPS   
-            loss.backward()
-
-
-
-            if (bi+1) % config.ACCUMULATION_STEPS    == 0:             # Wait for several backward steps
-                optimizer.step()                            # Now we can do an optimizer step
-                scheduler.step()
-                model.zero_grad()                           # Reset gradients tensors
-                if step >= last_eval_step + eval_period:
-                    val_rmse = eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)                           
-                    last_eval_step = step
-                    for rmse, period in config.EVAL_SCHEDULE:
-                        if val_rmse >= rmse:
-                            eval_period = period
-                            break                               
-                
-                    if not best_val_rmse or val_rmse < best_val_rmse:                    
-                        best_val_rmse = val_rmse
-                        best_epoch = epoch
-                        torch.save(model.state_dict(), model_path)
-                        print(f"New best_val_rmse: {best_val_rmse:0.4}")
-                    else:       
-                        print(f"Still best_val_rmse: {best_val_rmse:0.4}",
-                                f"(from epoch {best_epoch})")                                    
-            step += 1
-
-        writer.add_scalar('Loss/train', np.sqrt(losses.avg), (epoch+1)*len(train_data_loader))
-
-        rmse_score = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
-    return rmse_score
-
-def eval_fn(data_loader, model, device, iteration, writer):
-    model.eval()
-    losses = utils.AverageMeter()
-
-    with torch.no_grad():
-        for bi, d in enumerate(data_loader):
-            ids = d['ids']
-            mask = d['mask']
-            labels = d['labels']
-
-            ids = ids.to(device, dtype=torch.long)
-            mask = mask.to(device, dtype=torch.long)
-            labels = labels.to(device, dtype=torch.float)
-
-            outputs = \
-                model(ids=ids, mask=mask)
-            loss = loss_fn(outputs, labels)
-
-            losses.update(loss.item(), ids.size(0))
-    
-    writer.add_scalar('Loss/val', np.sqrt(losses.avg), iteration)
-    print(f'RMSE iter {iteration}= {np.sqrt(losses.avg)}')
+            outputs = outputs.cpu().detach().numpy()
+            predicted_labels.extend(outputs.squeeze(-1).tolist())
+    print(f'RMSE = {np.sqrt(losses.avg)}')
     return np.sqrt(losses.avg)
+
+
+if __name__ == '__main__':
+    assert len(sys.argv) > 1, "Please specify output pickle name."
+    utils.seed_everything(seed=config.SEEDS[0])
+    fold_scores = []
+    for i in range(config.N_FOLDS):
+        fold_score = run(i)
+        fold_scores.append(fold_score)
+
+    for i in range(config.N_FOLDS):
+        print(f'Fold={i}, RMSE = {fold_scores[i]}')
+    print(f'Mean = {np.mean(fold_scores)}')
+    print(f'Std = {np.std(fold_scores)}')
+
+    if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
+        os.makedirs(f'{config.INFERED_PICKLE_PATH}')
+
+    pickle_name = sys.argv[1]
+    with open(f'{config.INFERED_PICKLE_PATH}/{pickle_name}.pkl', 'wb') as handle:
+        pickle.dump(predicted_labels, handle)
