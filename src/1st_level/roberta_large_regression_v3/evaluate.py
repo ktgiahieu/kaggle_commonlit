@@ -1,5 +1,6 @@
 import sys
 import os
+import gc
 import pickle
 import torch
 import numpy as np
@@ -84,6 +85,8 @@ if __name__ == '__main__':
     for i in range(config.N_FOLDS):
         fold_score = run(i)
         fold_scores.append(fold_score)
+        torch.cuda.empty_cache()
+        gc.collect()
 
     for i in range(config.N_FOLDS):
         print(f'Fold={i}, RMSE = {fold_scores[i]}')
