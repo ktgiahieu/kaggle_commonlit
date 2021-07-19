@@ -45,9 +45,10 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out = out.hidden_states
         concated_last_hidden_states = torch.cat(
             tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=1)
-
+        concated_mask = torch.cat([mask for i in range (config.N_LAST_HIDDEN)], dim=1)
         #Self attention
-        weights = self.attention(concated_last_hidden_states, mask)
+
+        weights = self.attention(concated_last_hidden_states, concated_mask)
         context_vector = torch.sum(weights * concated_last_hidden_states, dim=1) 
 
         return self.classifier(context_vector)
