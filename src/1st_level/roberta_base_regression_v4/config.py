@@ -21,7 +21,7 @@ if is_kaggle:
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/roberta-base'
+    MODEL_CONFIG = "../input/clrp-roberta-base/clrp_roberta_base"
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
@@ -34,7 +34,7 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'roberta-base'
+    MODEL_CONFIG = '/content/clrp_roberta_base'
 
 EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 16), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
 # Model params
