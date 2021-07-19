@@ -94,15 +94,13 @@ if __name__ == '__main__':
         print(f"Training with SEED={seed}")
         fold_scores = []
         for i in range(config.N_FOLDS):
-            if (seed != config.SEEDS[1] or i!=4) and seed != config.SEEDS[2]:
-                continue
             writer = SummaryWriter(f"logs/fold{i}_seed{seed}")
             fold_score = run(i, seed)
             fold_scores.append(fold_score)
             writer.close()
 
-        #print('\nScores without SWA:')
-        #for i in range(config.N_FOLDS):
-        #    print(f'Fold={i}, RMSE = {fold_scores[i]}')
-        #print(f'Mean = {np.mean(fold_scores)}')
-        #print(f'Std = {np.std(fold_scores)}')
+        print('\nScores without SWA:')
+        for i in range(config.N_FOLDS):
+            print(f'Fold={i}, RMSE = {fold_scores[i]}')
+        print(f'Mean = {np.mean(fold_scores)}')
+        print(f'Std = {np.std(fold_scores)}')
