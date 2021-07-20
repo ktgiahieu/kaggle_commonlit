@@ -43,10 +43,13 @@ def run():
         for seed in config.SEEDS:
             model = models.CommonlitModel(conf=model_config)
             model.to(device)
-            if i<=2:
-                model_path = f'{config.TRAINED_MODEL_PATH}-p1/model_{i}_{seed}.bin'
+            if config.is_kaggle:
+                if i<=2:
+                    model_path = f'{config.TRAINED_MODEL_PATH}-p1/model_{i}_{seed}.bin'
+                else:
+                    model_path = f'{config.TRAINED_MODEL_PATH}-p2/model_{i}_{seed}.bin'
             else:
-                model_path = f'{config.TRAINED_MODEL_PATH}-p2/model_{i}_{seed}.bin'
+                model_path = f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'
             model.load_state_dict(torch.load(model_path), strict=False)
             model.eval()
             all_models.append(model)
