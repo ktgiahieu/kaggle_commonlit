@@ -7,11 +7,10 @@ import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
+comp_name = 'commonlitreadabilityprize'
+my_impl = 'commonlit-impl'
+my_model_dataset = 'commonlit-roberta-large-concatdim1'
 if is_kaggle:
-    comp_name = 'commonlitreadabilityprize'
-    my_impl = 'commonlit-impl'
-    my_model_dataset = 'commonlit-roberta-large-concatdim1'
-
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
