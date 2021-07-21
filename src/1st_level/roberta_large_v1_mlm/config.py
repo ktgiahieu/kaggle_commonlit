@@ -9,7 +9,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 # Paths
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-roberta-large-concat'
+my_model_dataset = 'commonlit-roberta-large-v1-mlm'
 if is_kaggle:
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -22,7 +22,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'roberta_large_concat'
+    model_save = 'roberta_large_v1_mlm'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -31,9 +31,8 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'roberta-large'
+    MODEL_CONFIG = '/content/clrp-roberta-large'
 
-EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 16), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
@@ -43,8 +42,18 @@ PATIENCE = None
 EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 8
 VALID_BATCH_SIZE = 8
-MAX_LEN = 248  # actually = inf
 ACCUMULATION_STEPS = 1
+MAX_LEN = 248  # actually = inf
+
+EVAL_SCHEDULE = [
+                (0.6, 70*ACCUMULATION_STEPS),
+                (0.50, 16*ACCUMULATION_STEPS), 
+                (0.49, 8*ACCUMULATION_STEPS), 
+                (0.48, 4*ACCUMULATION_STEPS), 
+                (0.47, 2*ACCUMULATION_STEPS), 
+                (-1., 1*ACCUMULATION_STEPS)
+                ]
+
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)

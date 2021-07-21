@@ -33,7 +33,6 @@ else: #colab
 
     MODEL_CONFIG = 'roberta-large'
 
-EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 16), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
@@ -43,11 +42,21 @@ PATIENCE = None
 EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 8
 VALID_BATCH_SIZE = 8
-MAX_LEN = 248  # actually = inf
 ACCUMULATION_STEPS = 1
+MAX_LEN = 248  # actually = inf
+
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
+
+EVAL_SCHEDULE = [
+                (0.6, 70*ACCUMULATION_STEPS),
+                (0.50, 16*ACCUMULATION_STEPS), 
+                (0.49, 8*ACCUMULATION_STEPS), 
+                (0.48, 4*ACCUMULATION_STEPS), 
+                (0.47, 2*ACCUMULATION_STEPS), 
+                (-1., 1*ACCUMULATION_STEPS)
+                ]
 
 HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
