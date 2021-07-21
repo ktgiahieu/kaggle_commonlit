@@ -30,7 +30,7 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = '/content/clrp-deberta-large'
+    MODEL_CONFIG = '/content/clrp_deberta_large'
 
 
 # Model params
