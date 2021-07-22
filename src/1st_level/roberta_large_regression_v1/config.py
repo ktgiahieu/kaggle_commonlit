@@ -7,13 +7,11 @@ import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
+model_type = 'roberta-large'
+comp_name = 'commonlitreadabilityprize'
+my_impl = 'commonlit-impl'
+my_model_dataset = 'commonlit-roberta-large-regression-v1'
 if is_kaggle:
-    comp_name = 'commonlitreadabilityprize'
-    my_impl = 'commonlit-impl'
-    my_model_dataset = 'commonlit-roberta-large-regression-v1'
-    if not os.path.isdir(f'../input/{my_model_dataset}'):
-        my_model_dataset = my_model_dataset + '-notebook'
-
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
@@ -36,7 +34,6 @@ else: #colab
 
     MODEL_CONFIG = 'roberta-large'
 
-EVAL_SCHEDULE = [(0.6, 70),(0.51, 32), (0.50, 16), (0.49, 8), (0.48, 4), (0.47, 2), (-1., 1)]
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
@@ -46,8 +43,17 @@ PATIENCE = None
 EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 8
 VALID_BATCH_SIZE = 8
-MAX_LEN = 248  # actually = inf
 ACCUMULATION_STEPS = 1
+MAX_LEN = 248
+
+EVAL_SCHEDULE = [
+                (0.6, 70*ACCUMULATION_STEPS),
+                (0.50, 16*ACCUMULATION_STEPS), 
+                (0.49, 8*ACCUMULATION_STEPS), 
+                (0.48, 4*ACCUMULATION_STEPS), 
+                (0.47, 2*ACCUMULATION_STEPS), 
+                (-1., 1*ACCUMULATION_STEPS)
+                ]
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
@@ -67,5 +73,6 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-LEARNING_RATES = [2e-5, 3e-5, 4e-5]
+HEAD_LEARNING_RATE = 1e-3
+LEARNING_RATES_RANGE = [2e-5, 4e-5]
 WEIGHT_DECAY = 0.01

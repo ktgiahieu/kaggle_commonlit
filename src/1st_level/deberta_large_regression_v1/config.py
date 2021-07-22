@@ -7,11 +7,11 @@ import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
+model_type = 'deberta-large'
+comp_name = 'commonlitreadabilityprize'
+my_impl = 'commonlit-impl'
+my_model_dataset = 'commonlit-deberta-large-regression-ver1'
 if is_kaggle:
-    comp_name = 'commonlitreadabilityprize'
-    my_impl = 'commonlit-impl'
-    my_model_dataset = 'commonlit-deberta-large-regression-ver1'
-
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
@@ -74,5 +74,6 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-LEARNING_RATES = [5e-6, 8e-6, 1e-5]
+HEAD_LEARNING_RATE = 1e-3
+LEARNING_RATES_RANGE = [5e-6, 1e-5]
 WEIGHT_DECAY = 0.01

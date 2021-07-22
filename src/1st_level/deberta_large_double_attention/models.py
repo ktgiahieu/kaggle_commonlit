@@ -14,11 +14,13 @@ class SelfAttention(torch.nn.Module):
     def masked_vector(self, vector, mask):
         return vector + (mask.unsqueeze(-1) + 1e-45).log()
 
-    def forward(self, x, mask):
+    def forward(self, x, mask=None):
         out = self.linear1(x)
         out = self.tanh(out)
         out = self.linear2(out)
-        out = self.masked_vector(out, mask)
+
+        if mask is not None:
+            out = self.masked_vector(out, mask)
         out = self.softmax(out)
         return out
 
@@ -29,7 +31,9 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
-        self.attention = SelfAttention()
+        self.attention_pooler = SelfAttention()
+
+        self.attention_head = SelfAttention()
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
@@ -41,14 +45,17 @@ class CommonlitModel(transformers.BertPreTrainedModel):
     def forward(self, ids, mask):
         out = self.automodel(ids, attention_mask=mask)
 
-        # Mean-max pooler
-        out = out.hidden_states
-        concated_last_hidden_states = torch.cat(
-            tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=1)
-        concated_mask = torch.cat([mask for i in range (config.N_LAST_HIDDEN)], dim=1)
+        # Attention pooler
+        out = out.hidden_states #24 arrays: (8, 248, 768)
+        out = torch.stack(
+            tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=2) #(8, 248, 4, 768)
+
+        pooler_weights = self.attention_pooler(out)
+        pooled_last_hidden_states = torch.sum(pooler_weights * out, dim=2) #(8, 248, 768)
+
         #Self attention
 
-        weights = self.attention(concated_last_hidden_states, concated_mask)
-        context_vector = torch.sum(weights * concated_last_hidden_states, dim=1) 
+        head_weights = self.attention_head(pooled_last_hidden_states, mask)
+        context_vector = torch.sum(head_weights * pooled_last_hidden_states, dim=1) #(8, 768)
 
-        return self.classifier(context_vector)
+        return self.classifier(context_vector) #(8)

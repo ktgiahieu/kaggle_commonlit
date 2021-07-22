@@ -7,6 +7,7 @@ import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
+model_type = 'roberta-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
 my_model_dataset = 'commonlit-roberta-large-double-attention'
@@ -45,10 +46,6 @@ VALID_BATCH_SIZE = 8
 ACCUMULATION_STEPS = 1
 MAX_LEN = 248  # actually = inf
 
-
-TOKENIZER = AutoTokenizer.from_pretrained(
-    MODEL_CONFIG)
-
 EVAL_SCHEDULE = [
                 (0.6, 70*ACCUMULATION_STEPS),
                 (0.50, 16*ACCUMULATION_STEPS), 
@@ -57,6 +54,9 @@ EVAL_SCHEDULE = [
                 (0.47, 2*ACCUMULATION_STEPS), 
                 (-1., 1*ACCUMULATION_STEPS)
                 ]
+
+TOKENIZER = AutoTokenizer.from_pretrained(
+    MODEL_CONFIG)
 
 HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
@@ -73,5 +73,6 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-LEARNING_RATES = [2e-5, 3e-5, 4e-5]
+HEAD_LEARNING_RATE = 1e-3
+LEARNING_RATES_RANGE = [2e-5, 4e-5]
 WEIGHT_DECAY = 0.01
