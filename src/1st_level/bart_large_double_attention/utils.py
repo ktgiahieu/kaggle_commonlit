@@ -58,14 +58,17 @@ def create_optimizer(model):
         if config.model_type.split('-')[0] == 'bart':
             found_layer_num_encoder = re.search('(?<=encoder\.layer).*', name)
             if found_layer_num_encoder:
-                print(found_layer_num_encoder.group(0))
-                layer_num = int(re.search('(?<=\.)\d+(?=\.)',found_layer_num_encoder.group(0)).group(0))
-                lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
+                found_a_number = re.search('(?<=\.)\d+(?=\.)',found_layer_num_encoder.group(0))#fix encoder.layernorm.weight bug
+                if found_a_number:
+                    layer_num = int(found_a_number.group(0))
+                    lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
             
             found_layer_num_decoder = re.search('(?<=decoder\.layer).*', name)
             if found_layer_num_decoder:
-                layer_num = int(re.search('(?<=\.)\d+(?=\.)',found_layer_num_decoder.group(0)).group(0))
-                lr = config.LEARNING_RATES_RANGE[0] + (layer_num+13) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
+                found_a_number = re.search('(?<=\.)\d+(?=\.)',found_layer_num_decoder.group(0))#fix encoder.layernorm.weight bug
+                if found_a_number:
+                    layer_num = int(found_a_number.group(0))
+                    lr = config.LEARNING_RATES_RANGE[0] + (layer_num+13) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
 
         else:
             found_layer_num = re.search('(?<=encoder\.layer).*', name)
