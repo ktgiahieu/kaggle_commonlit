@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 model_type = 'bart-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-bart-large-meanmax'
+my_model_dataset = 'commonlit-bart-large-double-attention'
 if is_kaggle:
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'bart_large_meanmax'
+    model_save = 'bart_large_double_attention'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
