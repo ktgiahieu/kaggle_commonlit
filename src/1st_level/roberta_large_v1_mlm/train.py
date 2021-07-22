@@ -95,10 +95,11 @@ if __name__ == '__main__':
         fold_scores = []
         for i in range(config.N_FOLDS):
             if (seed!=config.SEEDS[1] or i!=4) and seed!=config.SEEDS[2]:
-                writer = SummaryWriter(f"logs/fold{i}_seed{seed}")
-                fold_score = run(i, seed)
-                fold_scores.append(fold_score)
-                writer.close()
+                continue
+            writer = SummaryWriter(f"logs/fold{i}_seed{seed}")
+            fold_score = run(i, seed)
+            fold_scores.append(fold_score)
+            writer.close()
 
         #print('\nScores without SWA:')
         #for i in range(config.N_FOLDS):
