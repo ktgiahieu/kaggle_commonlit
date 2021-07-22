@@ -46,7 +46,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out = self.automodel(ids, attention_mask=mask)
 
         # Attention pooler
-        out = out.hidden_states #24 arrays: (8, 248, 768)
+        out = out.decoder_hidden_states #24 arrays: (8, 248, 768)
         out = torch.stack(
             tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=2) #(8, 248, 4, 768)
 
