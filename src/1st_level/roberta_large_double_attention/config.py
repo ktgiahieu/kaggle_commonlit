@@ -12,10 +12,10 @@ comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
 my_model_dataset = 'commonlit-roberta-large-double-attention'
 if is_kaggle:
-    TRAINING_FILE = f'../input/{comp_name}/train.csv'
+    TRAINING_FILE = f'../input/commonlit-train-folds/train_folds.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
-    MODEL_SAVE_PATH = f'../input/{my_model_dataset}'
+    MODEL_SAVE_PATH = f'.'
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
