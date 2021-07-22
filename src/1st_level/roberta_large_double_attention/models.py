@@ -46,17 +46,16 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out = self.automodel(ids, attention_mask=mask)
 
         # Attention pooler
-        out = out.hidden_states
+        out = out.hidden_states #24 arrays: (8, 248, 768)
         out = torch.stack(
-            tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=2)
-        print(out.shape) #(32, 248, 4, 768)
+            tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=2) #(8, 248, 4, 768)
 
         pooler_weights = self.attention_pooler(out)
-        pooled_last_hidden_states = torch.sum(pooler_weights * out, dim=2) #(32, 248, 768)
+        pooled_last_hidden_states = torch.sum(pooler_weights * out, dim=2) #(8, 248, 768)
 
         #Self attention
 
         head_weights = self.attention_head(pooled_last_hidden_states, mask)
-        context_vector = torch.sum(head_weights * pooled_last_hidden_states, dim=1) 
+        context_vector = torch.sum(head_weights * pooled_last_hidden_states, dim=1) #(8, 768)
 
-        return self.classifier(context_vector)
+        return self.classifier(context_vector) #(8)
