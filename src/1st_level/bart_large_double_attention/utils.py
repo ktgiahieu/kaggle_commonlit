@@ -51,9 +51,10 @@ def create_optimizer(model):
     parameters = []
     parameters.append({"params": head_group, "lr": config.HEAD_LEARNING_RATE})
 
+    last_lr = config.LEARNING_RATES_RANGE[0]
     for name, params in automodel_parameters:
         weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
-        lr = config.LEARNING_RATES_RANGE[0]
+        lr = None
 
         if config.model_type.split('-')[0] == 'bart':
             found_layer_num_encoder = re.search('(?<=encoder\.layer).*', name)
@@ -76,7 +77,10 @@ def create_optimizer(model):
                 layer_num = int(re.search('(?<=\.)\d+(?=\.)',found_layer_num.group(0)).group(0))
                 lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
 
+        if lr is None:
+            lr = last_lr
         parameters.append({"params": params,
                            "weight_decay": weight_decay,
                            "lr": lr})
+        last_lr = lr
     return torch.optim.AdamW(parameters)
