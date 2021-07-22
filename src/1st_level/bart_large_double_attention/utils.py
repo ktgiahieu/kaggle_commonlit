@@ -58,6 +58,7 @@ def create_optimizer(model):
         if config.model_type.split('-')[0] == 'bart':
             found_layer_num_encoder = re.search('(?<=encoder\.layer).*', name)
             if found_layer_num_encoder:
+                print(found_layer_num_encoder.group(0))
                 layer_num = int(re.search('(?<=\.)\d+(?=\.)',found_layer_num_encoder.group(0)).group(0))
                 lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
             
