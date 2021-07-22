@@ -83,5 +83,4 @@ def create_optimizer(model):
                            "weight_decay": weight_decay,
                            "lr": lr})
         last_lr = lr
-        print(name, lr)
     return torch.optim.AdamW(parameters)
