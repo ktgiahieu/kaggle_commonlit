@@ -51,20 +51,25 @@ def create_optimizer(model):
     parameters = []
     parameters.append({"params": head_group, "lr": config.HEAD_LEARNING_RATE})
 
+    last_lr = config.LEARNING_RATES_RANGE[0]
     for name, params in automodel_parameters:
         weight_decay = 0.0 if "bias" in name else config.WEIGHT_DECAY
-        lr = config.LEARNING_RATES_RANGE[0]
+        lr = None
 
         if config.model_type.split('-')[0] == 'bart':
             found_layer_num_encoder = re.search('(?<=encoder\.layer).*', name)
             if found_layer_num_encoder:
-                layer_num = int(re.search('(?<=\.)\d+(?=\.)',found_layer_num_encoder.group(0)).group(0))
-                lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
+                found_a_number = re.search('(?<=\.)\d+(?=\.)',found_layer_num_encoder.group(0))#fix encoder.layernorm.weight bug
+                if found_a_number:
+                    layer_num = int(found_a_number.group(0))
+                    lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
             
             found_layer_num_decoder = re.search('(?<=decoder\.layer).*', name)
             if found_layer_num_decoder:
-                layer_num = int(re.search('(?<=\.)\d+(?=\.)',found_layer_num_decoder.group(0)).group(0))
-                lr = config.LEARNING_RATES_RANGE[0] + (layer_num+13) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
+                found_a_number = re.search('(?<=\.)\d+(?=\.)',found_layer_num_decoder.group(0))#fix encoder.layernorm.weight bug
+                if found_a_number:
+                    layer_num = int(found_a_number.group(0))
+                    lr = config.LEARNING_RATES_RANGE[0] + (layer_num+13) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
 
         else:
             found_layer_num = re.search('(?<=encoder\.layer).*', name)
@@ -72,7 +77,11 @@ def create_optimizer(model):
                 layer_num = int(re.search('(?<=\.)\d+(?=\.)',found_layer_num.group(0)).group(0))
                 lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
 
+        if lr is None:
+            lr = last_lr
         parameters.append({"params": params,
                            "weight_decay": weight_decay,
                            "lr": lr})
+        last_lr = lr
+        print(name, lr)
     return torch.optim.AdamW(parameters)
