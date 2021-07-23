@@ -35,9 +35,9 @@ else: #colab
     MODEL_CONFIG = 'roberta-large'
 
 # Model params
-SEEDS = [10, 20, 30, 40, 50, 60, 70, 80, 90]
+SEEDS = [4, 5, 6]
 N_FOLDS = 5
-EPOCHS = 3
+EPOCHS = 4
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
@@ -48,11 +48,11 @@ MAX_LEN = 248  # actually = inf
 
 EVAL_SCHEDULE = [
                 (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 32*ACCUMULATION_STEPS), 
-                (0.49, 16*ACCUMULATION_STEPS), 
-                (0.48, 8*ACCUMULATION_STEPS), 
-                (0.47, 4*ACCUMULATION_STEPS), 
-                (-1., 2*ACCUMULATION_STEPS)
+                (0.50, 16*ACCUMULATION_STEPS), 
+                (0.49, 8*ACCUMULATION_STEPS), 
+                (0.48, 4*ACCUMULATION_STEPS), 
+                (0.47, 2*ACCUMULATION_STEPS), 
+                (-1., 1*ACCUMULATION_STEPS)
                 ]
 
 TOKENIZER = AutoTokenizer.from_pretrained(
@@ -73,7 +73,7 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-ATTENTION_POOLER_LEARNING_RATE = 1e-4
+ATTENTION_POOLER_LEARNING_RATE = 5e-4
 HEAD_LEARNING_RATE = 1e-3
-LEARNING_RATES_RANGE = [3e-5, 5e-5]
+LEARNING_RATES_RANGE = [2e-5, 5e-5]
 WEIGHT_DECAY = 0.01
