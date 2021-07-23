@@ -52,7 +52,6 @@ def create_optimizer(model):
 
     parameters = []
     parameters.append({"params": attention_pooler_group,
-                       "weight_decay": weight_decay,
                        "lr": config.ATTENTION_POOLER_LEARNING_RATE})
     parameters.append({"params": head_group, "lr": config.HEAD_LEARNING_RATE})
 
