@@ -35,9 +35,9 @@ else: #colab
     MODEL_CONFIG = 'roberta-large'
 
 # Model params
-SEEDS = [1000, 25, 42]
+SEEDS = [1, 2, 3]
 N_FOLDS = 5
-EPOCHS = 3
+EPOCHS = 4
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
