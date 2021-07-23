@@ -8,7 +8,7 @@ class SelfAttentionPooler(torch.nn.Module):
         super(SelfAttentionPooler, self).__init__()
         self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
         self.tanh = torch.nn.Tanh()            
-        self.dropout1 = torch.nn.Dropout(0.1),
+        self.dropout1 = torch.nn.Dropout(0.1)
         self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
         self.softmax = torch.nn.Softmax(dim=1)
 
