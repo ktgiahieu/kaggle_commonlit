@@ -5,7 +5,7 @@ import config
 
 class SelfAttentionPooler(torch.nn.Module):
     def __init__(self):
-        super(SelfAttention, self).__init__()
+        super(SelfAttentionPooler, self).__init__()
         self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
         self.tanh = torch.nn.Tanh()            
         self.dropout1 = torch.nn.Dropout(0.05),
@@ -23,7 +23,7 @@ class SelfAttentionPooler(torch.nn.Module):
 
 class SelfAttentionHead(torch.nn.Module):
     def __init__(self):
-        super(SelfAttention, self).__init__()
+        super(SelfAttentionHead, self).__init__()
         self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
         self.tanh = torch.nn.Tanh()            
         self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
