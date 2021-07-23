@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'roberta_large_double_attention-all'
+    model_save = 'roberta_large_double_attention_all'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
