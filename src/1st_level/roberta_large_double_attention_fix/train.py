@@ -94,7 +94,7 @@ if __name__ == '__main__':
         print(f"Training with SEED={seed}")
         fold_scores = []
         for i in range(config.N_FOLDS):
-            if i!=4:
+            if i!=2:
                 continue
             writer = SummaryWriter(f"logs/fold{i}_seed{seed}")
             fold_score = run(i, seed)

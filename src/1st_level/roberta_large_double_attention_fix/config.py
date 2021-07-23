@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 model_type = 'roberta-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-roberta-large-double-attention-dropout03'
+my_model_dataset = 'commonlit-roberta-large-double-attention-fix'
 if is_kaggle:
     TRAINING_FILE = f'../input/commonlit-impl/data/train_folds.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'roberta_large_double_attention_dropout03'
+    model_save = 'roberta_large_double_attention_fix'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -35,7 +35,7 @@ else: #colab
     MODEL_CONFIG = 'roberta-large'
 
 # Model params
-SEEDS = [1100, 125, 142]
+SEEDS = [21]
 N_FOLDS = 5
 EPOCHS = 4
 
