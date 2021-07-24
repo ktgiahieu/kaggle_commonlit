@@ -42,8 +42,8 @@ EPOCHS = 4
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 2
-VALID_BATCH_SIZE = 2
+TRAIN_BATCH_SIZE = 1
+VALID_BATCH_SIZE = 1
 ACCUMULATION_STEPS = 4
 MAX_LEN = 248  # actually = inf
 
@@ -52,11 +52,11 @@ TOKENIZER = AutoTokenizer.from_pretrained(
 
 EVAL_SCHEDULE = [
                 (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 16*ACCUMULATION_STEPS), 
-                (0.49, 8*ACCUMULATION_STEPS), 
-                (0.48, 4*ACCUMULATION_STEPS), 
-                (0.47, 2*ACCUMULATION_STEPS), 
-                (-1., 1*ACCUMULATION_STEPS)
+                (0.50, 40*ACCUMULATION_STEPS), 
+                (0.49, 20*ACCUMULATION_STEPS), 
+                (0.48, 15*ACCUMULATION_STEPS), 
+                (0.47, 10*ACCUMULATION_STEPS), 
+                (-1., 5*ACCUMULATION_STEPS)
                 ]
 
 HIDDEN_SIZE = 1536
