@@ -77,12 +77,12 @@ def create_optimizer(model):
             found_block_encoder = re.search('(?<=encoder\.blocks).*', name)
             if found_block_encoder:
                 block_num, subblock_num = tuple([int(x) for x in re.findall('(?<=\.)\d+(?=\.)',found_block_encoder.group(0))])
-                layer_num = block_num*8 + subblock_num+1
+                layer_num = block_num*8 + subblock_num
                 lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
             
             found_layer_decoder = re.search('(?<=decoder\.layers).*', name)
             if found_layer_decoder:
-                layer_num = 24 +1 + int(re.search('(?<=\.)\d+(?=\.)',found_layer_decoder.group(0)).group(0))
+                layer_num = 24 + int(re.search('(?<=\.)\d+(?=\.)',found_layer_decoder.group(0)).group(0))
                 lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
         else:
             found_layer_num = re.search('(?<=encoder\.layer).*', name)
