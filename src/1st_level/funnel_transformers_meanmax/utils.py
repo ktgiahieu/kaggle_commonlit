@@ -37,12 +37,13 @@ def create_optimizer(model):
     num_layers = 6   #distil
     if config.model_type.split('-')[-1] == 'base':
         num_layers = 12
+    elif config.model_type == 'funnel-transformers-large':
+        num_layers = 26
     elif config.model_type.split('-')[-1]=='large' or config.model_type == 'deberta-v2-xlarge':
         num_layers = 24
     elif  config.model_type == 'deberta-xlarge' or config.model_type == 'deberta-v2-xxlarge':
         num_layers = 48
-    elif config.model_type == 'funnel-transformers-large':
-        num_layers = 26
+    
 
     named_parameters = list(model.named_parameters()) 
     automodel_parameters = list(model.automodel.named_parameters())
