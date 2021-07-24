@@ -16,7 +16,7 @@ if __name__ == "__main__":
     #kf = model_selection.KFold(n_splits=5)
     kf = ContinuousStratifiedKFold(n_splits=5) #shuffle=True, random_state=SEED
 
-    for fold, (trn_, val_) in enumerate(kf.split(X=df, y=df.target.values)):
+    for fold, (trn_, val_) in enumerate(kf.split(df, df.target.values)):
         print(len(trn_), len(val_))
         df.loc[val_, 'kfold'] = fold
 
