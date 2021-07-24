@@ -19,7 +19,7 @@ if is_kaggle:
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/deberta-large-mnli'
+    MODEL_CONFIG = '../input/deberta-large'
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
@@ -32,7 +32,7 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'microsoft/deberta-large-mnli'
+    MODEL_CONFIG = 'microsoft/deberta-large'
 
 
 # Model params
@@ -75,5 +75,5 @@ NUM_SHOW_ITER = 20
 
 #Author hyperparams
 HEAD_LEARNING_RATE = 1e-3
-LEARNING_RATES_RANGE = [3e-6, 7e-8]
+LEARNING_RATES_RANGE = [5e-6, 1e-5]
 WEIGHT_DECAY = 0.01
