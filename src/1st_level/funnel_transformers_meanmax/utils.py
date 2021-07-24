@@ -46,15 +46,11 @@ def create_optimizer(model):
 
     named_parameters = list(model.named_parameters()) 
     automodel_parameters = list(model.automodel.named_parameters())
-    attention_pooler_parameters = named_parameters[len(automodel_parameters):len(automodel_parameters)+4]
-    head_parameters = named_parameters[len(automodel_parameters)+4:]
+    head_parameters = named_parameters[len(automodel_parameters):]
         
-    attention_pooler_group = [params for (name, params) in attention_pooler_parameters]
     head_group = [params for (name, params) in head_parameters]
 
     parameters = []
-    parameters.append({"params": attention_pooler_group,
-                       "lr": config.ATTENTION_POOLER_LEARNING_RATE})
     parameters.append({"params": head_group, "lr": config.HEAD_LEARNING_RATE})
 
     last_lr = config.LEARNING_RATES_RANGE[0]
