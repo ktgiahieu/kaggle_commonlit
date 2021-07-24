@@ -12,7 +12,7 @@ comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
 my_model_dataset = 'commonlit-roberta-large-double-attention'
 if is_kaggle:
-    TRAINING_FILE = f'../input/commonlit-impl/data/train_folds.csv'
+    TRAINING_FILE = f'../input/commonlit-impl/data/train_folds_bins.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
     MODEL_SAVE_PATH = f'.'
@@ -73,7 +73,7 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-ATTENTION_POOLER_LEARNING_RATE = 1e-4
+ATTENTION_POOLER_LEARNING_RATE = 5e-4
 HEAD_LEARNING_RATE = 1e-3
-LEARNING_RATES_RANGE = [2e-5, 4e-5]
+LEARNING_RATES_RANGE = [2e-5, 5e-5]
 WEIGHT_DECAY = 0.01

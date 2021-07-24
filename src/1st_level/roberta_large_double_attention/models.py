@@ -3,9 +3,27 @@ import transformers
 
 import config
 
-class SelfAttention(torch.nn.Module):
+class SelfAttentionPooler(torch.nn.Module):
     def __init__(self):
-        super(SelfAttention, self).__init__()
+        super(SelfAttentionPooler, self).__init__()
+        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
+        self.tanh = torch.nn.Tanh()            
+        self.dropout1 = torch.nn.Dropout(0.3)
+        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
+        self.softmax = torch.nn.Softmax(dim=1)
+
+    def forward(self, x, mask=None):
+        out = self.linear1(x)
+        out = self.tanh(out)
+        out = self.dropout1(out)
+        out = self.linear2(out)
+        out = self.softmax(out)
+        return out
+
+
+class SelfAttentionHead(torch.nn.Module):
+    def __init__(self):
+        super(SelfAttentionHead, self).__init__()
         self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
         self.tanh = torch.nn.Tanh()            
         self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
@@ -31,9 +49,9 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
-        self.attention_pooler = SelfAttention()
+        self.attention_pooler = SelfAttentionPooler()
 
-        self.attention_head = SelfAttention()
+        self.attention_head = SelfAttentionHead()
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
