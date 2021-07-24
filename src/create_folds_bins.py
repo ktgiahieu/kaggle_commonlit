@@ -12,7 +12,7 @@ if __name__ == "__main__":
     #df = df.dropna().reset_index(drop=True)
     df["kfold"] = -1
 
-    df = df.sample(frac=1, random_state=50898).reset_index(drop=True)
+    df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 
     #kf = model_selection.KFold(n_splits=5)
     kf = ContinuousStratifiedKFold(n_splits=5) #shuffle=True, random_state=SEED
