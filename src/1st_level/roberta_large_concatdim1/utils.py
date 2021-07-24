@@ -37,10 +37,13 @@ def create_optimizer(model):
     num_layers = 6   #distil
     if config.model_type.split('-')[-1] == 'base':
         num_layers = 12
+    elif config.model_type == 'funnel-transformers-large':
+        num_layers = 26
     elif config.model_type.split('-')[-1]=='large' or config.model_type == 'deberta-v2-xlarge':
         num_layers = 24
     elif  config.model_type == 'deberta-xlarge' or config.model_type == 'deberta-v2-xxlarge':
         num_layers = 48
+    
 
     named_parameters = list(model.named_parameters()) 
     automodel_parameters = list(model.automodel.named_parameters())
@@ -70,7 +73,17 @@ def create_optimizer(model):
                 if found_a_number:
                     layer_num = int(found_a_number.group(0))
                     lr = config.LEARNING_RATES_RANGE[0] + (layer_num+13) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
-
+        elif config.model_type == 'funnel-transformers-large':
+            found_block_encoder = re.search('(?<=encoder\.blocks).*', name)
+            if found_block_encoder:
+                block_num, subblock_num = tuple([int(x) for x in re.findall('(?<=\.)\d+(?=\.)',found_block_encoder.group(0))])
+                layer_num = block_num*8 + subblock_num
+                lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
+            
+            found_layer_decoder = re.search('(?<=decoder\.layers).*', name)
+            if found_layer_decoder:
+                layer_num = 24 + int(re.search('(?<=\.)\d+(?=\.)',found_layer_decoder.group(0)).group(0))
+                lr = config.LEARNING_RATES_RANGE[0] + (layer_num+1) * (config.LEARNING_RATES_RANGE[1] - config.LEARNING_RATES_RANGE[0])/num_layers
         else:
             found_layer_num = re.search('(?<=encoder\.layer).*', name)
             if found_layer_num:
@@ -82,5 +95,6 @@ def create_optimizer(model):
         parameters.append({"params": params,
                            "weight_decay": weight_decay,
                            "lr": lr})
+        print(name, lr)
         last_lr = lr
-    return torch.optim.AdamW(parameters)
+    return torch.optim.AdamW(parameters, eps=1e-06)

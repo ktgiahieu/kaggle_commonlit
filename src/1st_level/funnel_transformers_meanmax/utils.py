@@ -97,4 +97,4 @@ def create_optimizer(model):
                            "lr": lr})
         print(name, lr)
         last_lr = lr
-    return torch.optim.AdamW(parameters)
+    return torch.optim.AdamW(parameters, eps=1e-06)
