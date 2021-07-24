@@ -29,11 +29,11 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
-        #self.attention = SelfAttention()
+        self.attention = SelfAttention()
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE, 1),
+            torch.nn.Linear(config.HIDDEN_SIZE*2, 1),
         )
 
     def forward(self, ids, mask):
