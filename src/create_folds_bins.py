@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import KFold, StratifiedKFold
 class ContinuousStratifiedKFold(StratifiedKFold):
     def split(selfself, x, y, groups=None):
