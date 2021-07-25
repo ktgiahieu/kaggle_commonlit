@@ -23,17 +23,21 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
     for epoch in range(config.EPOCHS):
         tk0 = tqdm.tqdm(train_data_loader, total=len(train_data_loader))
         for bi, d in enumerate(tk0):
-            ids = d['ids']
-            mask = d['mask']
+            ids_x = d['ids_x']
+            ids_y = d['ids_y']
+            mask_x = d['mask_x']
+            mask_y = d['mask_y']
             labels = d['labels']
 
-            ids = ids.to(device, dtype=torch.long)
-            mask = mask.to(device, dtype=torch.long)
+            ids_x = ids_x.to(device, dtype=torch.long)
+            ids_y = ids_y.to(device, dtype=torch.long)
+            mask_x = mask_x.to(device, dtype=torch.long)
+            mask_y = mask_y.to(device, dtype=torch.long)
             labels = labels.to(device, dtype=torch.float)
 
             model.train()
             model.zero_grad()
-            outputs = model(ids=ids, mask=mask)
+            outputs = model(ids_x=ids_x, ids_y=ids_y, mask_x=mask_x, mask_y=mask_y)
         
             loss = loss_fn(outputs, labels)
             loss.backward()
@@ -76,16 +80,22 @@ def eval_fn(data_loader, model, device, iteration, writer):
 
     with torch.no_grad():
         for bi, d in enumerate(data_loader):
-            ids = d['ids']
-            mask = d['mask']
+            ids_x = d['ids_x']
+            ids_y = d['ids_y']
+            mask_x = d['mask_x']
+            mask_y = d['mask_y']
             labels = d['labels']
 
-            ids = ids.to(device, dtype=torch.long)
-            mask = mask.to(device, dtype=torch.long)
+            ids_x = ids_x.to(device, dtype=torch.long)
+            ids_y = ids_y.to(device, dtype=torch.long)
+            mask_x = mask_x.to(device, dtype=torch.long)
+            mask_y = mask_y.to(device, dtype=torch.long)
             labels = labels.to(device, dtype=torch.float)
 
-            outputs = \
-                model(ids=ids, mask=mask)
+            model.train()
+            model.zero_grad()
+            outputs = model(ids_x=ids_x, ids_y=ids_y, mask_x=mask_x, mask_y=mask_y)
+
             loss = loss_fn(outputs, labels)
 
             losses.update(loss.item(), ids.size(0))
