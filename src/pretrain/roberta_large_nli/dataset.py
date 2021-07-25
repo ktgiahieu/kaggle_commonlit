@@ -39,7 +39,7 @@ class CommonlitDataset:
         self.tokenizer = config.TOKENIZER
 
     def __len__(self):
-        return len(self.texts)
+        return len(self.texts_x)
 
     def __getitem__(self, item):
         """Returns preprocessed data sample as dict with
