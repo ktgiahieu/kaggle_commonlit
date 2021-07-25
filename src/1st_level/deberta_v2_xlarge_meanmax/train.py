@@ -98,6 +98,8 @@ if __name__ == '__main__':
             fold_score = run(i, seed)
             fold_scores.append(fold_score)
             writer.close()
+            torch.cuda.empty_cache()
+            gc.collect()
 
         print('\nScores without SWA:')
         for i in range(config.N_FOLDS):

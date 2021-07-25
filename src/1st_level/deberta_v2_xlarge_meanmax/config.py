@@ -51,12 +51,8 @@ TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
 EVAL_SCHEDULE = [
-                (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 40*ACCUMULATION_STEPS), 
-                (0.49, 20*ACCUMULATION_STEPS), 
-                (0.48, 15*ACCUMULATION_STEPS), 
-                (0.47, 10*ACCUMULATION_STEPS), 
-                (-1., 5*ACCUMULATION_STEPS)
+                (0.48, 70*ACCUMULATION_STEPS), 
+                (-1., 10*ACCUMULATION_STEPS)
                 ]
 
 HIDDEN_SIZE = 1536

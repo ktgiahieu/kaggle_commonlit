@@ -53,29 +53,31 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
                 optimizer.step()                            # Now we can do an optimizer step
                 scheduler.step()
                 model.zero_grad()                           # Reset gradients tensors
-                #if step >= last_eval_step + eval_period:
-                #    val_rmse = eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)                           
-                #    last_eval_step = step
-                #    for rmse, period in config.EVAL_SCHEDULE:
-                #        if val_rmse >= rmse:
-                #            eval_period = period
-                #            break                               
+                if step >= last_eval_step + eval_period:
+                    val_rmse = eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)                           
+                    last_eval_step = step
+                    for rmse, period in config.EVAL_SCHEDULE:
+                        if val_rmse >= rmse:
+                            eval_period = period
+                            break                               
                 
-                #    if not best_val_rmse or val_rmse < best_val_rmse:                    
-                #        best_val_rmse = val_rmse
-                #        best_epoch = epoch
-                #        torch.save(model.state_dict(), model_path)
-                #        print(f"New best_val_rmse: {best_val_rmse:0.4}")
-                #    else:       
-                #        print(f"Still best_val_rmse: {best_val_rmse:0.4}",
-                #                f"(from epoch {best_epoch})")                                    
-            #step += 1
+                    if not best_val_rmse or val_rmse < best_val_rmse:                    
+                        best_val_rmse = val_rmse
+                        best_epoch = epoch
+                        torch.save(model.state_dict(), model_path)
+                        print(f"New best_val_rmse: {best_val_rmse:0.4}")
+                    else:       
+                        print(f"Still best_val_rmse: {best_val_rmse:0.4}",
+                                f"(from epoch {best_epoch})")                                    
+            step += 1
 
         torch.cuda.empty_cache()
         gc.collect()
         writer.add_scalar('Loss/train', np.sqrt(losses.avg), (epoch+1)*len(train_data_loader))
 
         rmse_score = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
+    torch.cuda.empty_cache()
+    gc.collect()
     return rmse_score
 
 def eval_fn(data_loader, model, device, iteration, writer):
