@@ -44,14 +44,14 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         # Mean-max pooler
         #out_x = out_x.last_hidden_state
         out_x = torch.stack(
-            tuple(out_x[-i - 1] for i in range(config.n_last_hidden)), dim=0)
+            tuple(out_x[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean_x = torch.mean(out_x, dim=0)
         out_max_x, _ = torch.max(out_x, dim=0)
         pooled_last_hidden_states_x = torch.cat((out_mean_x, out_max_x), dim=-1)
         
 
         out_y = torch.stack(
-            tuple(out_y[-i - 1] for i in range(config.n_last_hidden)), dim=0)
+            tuple(out_y[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean_y = torch.mean(out_y, dim=0)
         out_max_y, _ = torch.max(out_y, dim=0)
         pooled_last_hidden_states_y = torch.cat((out_mean_y, out_max_y), dim=-1)
@@ -67,7 +67,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         context_vector = torch.cat([context_vector_x, context_vector_y], dim=-1)
 
         #out = torch.stack(
-        #    tuple(out[-i - 1] for i in range(config.n_last_hidden)), dim=0)
+        #    tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         #out_mean = torch.mean(out, dim=0)
         #out_max, _ = torch.max(out, dim=0)
         #pooled_last_hidden_states = torch.cat((out_mean, out_max), dim=-1)
