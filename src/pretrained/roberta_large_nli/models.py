@@ -29,7 +29,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
-        #self.attention = SelfAttention()
+        self.attention = SelfAttention()
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
@@ -42,10 +42,16 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out_y = self.automodel(ids_y, attention_mask=mask_y)
 
         # Mean-max pooler
-        out_x = out_x.last_hidden_state[:,0,:]
-        out_y = out_y.last_hidden_state[:,0,:]
+        out_x = out_x.last_hidden_state
+        out_y = out_y.last_hidden_state
 
-        context_vector = torch.cat([out_x, out_y], dim=-1)
+        weights_x = self.attention(out_x, mask_x)
+        context_vector_x = torch.sum(weights_x * out_x, dim=1) 
+        weights_y = self.attention(out_y, mask_y)
+        context_vector_y = torch.sum(weights_y * out_y, dim=1) 
+
+        context_vector = torch.cat([context_vector_x, context_vector_y], dim=-1)
+
         #out = torch.stack(
         #    tuple(out[-i - 1] for i in range(config.n_last_hidden)), dim=0)
         #out_mean = torch.mean(out, dim=0)
