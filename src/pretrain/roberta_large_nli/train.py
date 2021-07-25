@@ -32,7 +32,7 @@ def run(seed):
     valid_dataset = dataset.CommonlitDataset(
         texts_x=df_valid.excerpt_x.values,
         texts_y=df_valid.excerpt_y.values,
-        labels=df_valid.target.value)
+        labels=df_valid.target.values)
 
     valid_data_loader = torch.utils.data.DataLoader(
         valid_dataset,
