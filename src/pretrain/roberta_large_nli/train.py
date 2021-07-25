@@ -94,7 +94,7 @@ if __name__ == '__main__':
         utils.seed_everything(seed=seed)
         print(f"Training with SEED={seed}")
         writer = SummaryWriter(f"logs/seed{seed}")
-        valid_loss = run(i, seed)
+        valid_loss = run(seed)
         writer.close()
 
         print(f'Fold={i}, Valid loss = {valid_loss}')
