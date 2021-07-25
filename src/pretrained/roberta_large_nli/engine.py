@@ -67,6 +67,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
         valid_loss = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
 
     model.save_pretrained(model_path)
+    config.TOKENIZER.save_pretrained(model_path)
     return valid_loss
 
 def eval_fn(data_loader, model, device, iteration, writer):
