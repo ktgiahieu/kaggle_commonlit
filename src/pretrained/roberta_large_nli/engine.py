@@ -65,6 +65,8 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
             #                f"(from epoch {best_epoch})")                                    
                     
             #step += 1
+            if bi%71 == 70:
+                eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) +bi, writer)
             
         writer.add_scalar('Loss/train', losses.avg, (epoch+1)*len(train_data_loader))
 
