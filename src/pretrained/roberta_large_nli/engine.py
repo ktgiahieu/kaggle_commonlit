@@ -5,7 +5,6 @@ import tqdm
 import config
 import utils
 
-
 def loss_fn(outputs, labels):
     loss_fct = torch.nn.BCELoss()
     return loss_fct(outputs, labels)
@@ -80,6 +79,8 @@ def eval_fn(data_loader, model, device, iteration, writer):
     model.eval()
     losses = utils.AverageMeter()
 
+    acc = 0
+    len_sample = 0
     with torch.no_grad():
         for bi, d in enumerate(data_loader):
             ids_x = d['ids_x']
@@ -101,7 +102,13 @@ def eval_fn(data_loader, model, device, iteration, writer):
             loss = loss_fn(outputs, labels)
 
             losses.update(loss.item(), ids_x.size(0))
+
+            acc += torch.sum(torch.abs(outputs - labels) < 0.5).item()
+            len_sample += ids_x.size(0)
     
+    acc /= len_sample
+    writer.add_scalar('Acc/val', acc, iteration)
+    print(f'Valid acc iter {iteration}= {acc}')
     writer.add_scalar('Loss/val', losses.avg, iteration)
     print(f'Valid loss iter {iteration}= {losses.avg}')
     return losses.avg
