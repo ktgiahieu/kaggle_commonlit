@@ -76,8 +76,12 @@ def run(seed):
         os.makedirs(f'{config.MODEL_SAVE_PATH}')
 
     print(f'Training is starting')
-    torch.save(model.automodel.state_dict(), f'{config.MODEL_SAVE_PATH}/model_{seed}.bin')
-    torch.save(model.state_dict(), f'{config.MODEL_SAVE_PATH}/model_full_1000.bin')
+    if not os.path.isdir(f'{config.MODEL_SAVE_PATH}/model_{seed}'):
+        os.makedirs(f'{config.MODEL_SAVE_PATH}/model_{seed}')
+    if not os.path.isdir(f'{config.MODEL_SAVE_PATH}//model_full_{seed}'):
+        os.makedirs(f'{config.MODEL_SAVE_PATH}//model_full_{seed}')
+    model.automodel.save_pretrained(f'{config.MODEL_SAVE_PATH}/model_{seed}')
+    model.save_pretrained(f'{config.MODEL_SAVE_PATH}/model_full_{seed}')
     #valid_loss = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
     #                device, writer, f'{config.MODEL_SAVE_PATH}/model_{seed}.bin', scheduler=scheduler)
     valid_loss = 0
