@@ -24,7 +24,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'roberta_large_nli'
+    model_save = 'roberta-large-nli'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_nli.csv'
     VALID_FILE = f'/content/{repo_name}/data/valid_nli.csv'
