@@ -44,8 +44,8 @@ PATIENCE = None
 EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 1
 VALID_BATCH_SIZE = 1
-ACCUMULATION_STEPS = 2
-MAX_LEN = 248  # actually = inf
+ACCUMULATION_STEPS = 4
+MAX_LEN = 192  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
