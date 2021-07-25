@@ -93,7 +93,7 @@ if __name__ == '__main__':
     for seed in config.SEEDS:
         utils.seed_everything(seed=seed)
         print(f"Training with SEED={seed}")
-        writer = SummaryWriter(f"logs/fold{i}_seed{seed}")
+        writer = SummaryWriter(f"logs/seed{seed}")
         valid_loss = run(i, seed)
         writer.close()
 
