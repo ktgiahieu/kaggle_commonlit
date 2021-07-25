@@ -93,5 +93,5 @@ def eval_fn(data_loader, model, device, iteration, writer):
             losses.update(loss.item(), ids.size(0))
     
     writer.add_scalar('Loss/val', losses.avg, iteration)
-    print(f'Valid loss iter {iteration}= losses.avg}')
+    print(f'Valid loss iter {iteration}= {losses.avg}')
     return losses.avg
