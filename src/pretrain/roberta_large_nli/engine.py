@@ -66,10 +66,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
 
         valid_loss = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
 
-    torch.save({
-        "model_state_dict": model.automodel.state_dict(),
-        "my_param": parameters,
-    }, model_path)
+    torch.save(model.automodel.state_dict(), model_path)
     return valid_loss
 
 def eval_fn(data_loader, model, device, iteration, writer):
