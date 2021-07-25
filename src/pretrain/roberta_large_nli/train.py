@@ -76,7 +76,7 @@ def run(seed):
         os.makedirs(f'{config.MODEL_SAVE_PATH}')
 
     print(f'Training is starting')
-    torch.save(model.automodel.state_dict(), f'{config.MODEL_SAVE_PATH}/model_{seed}.bin)
+    torch.save(model.automodel.state_dict(), f'{config.MODEL_SAVE_PATH}/model_{seed}.bin')
     valid_loss = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
                     device, writer, f'{config.MODEL_SAVE_PATH}/model_{seed}.bin', scheduler=scheduler)
 
