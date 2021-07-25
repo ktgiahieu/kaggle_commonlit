@@ -6,9 +6,9 @@ import config
 class SelfAttention(torch.nn.Module):
     def __init__(self):
         super(SelfAttention, self).__init__()
-        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE, config.ATTENTION_HIDDEN_SIZE)          
+        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE*2)          
         self.tanh = torch.nn.Tanh()            
-        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE, 1)
+        self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE*2, 1)
         self.softmax = torch.nn.Softmax(dim=1)
 
     def masked_vector(self, vector, mask):
@@ -33,7 +33,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE*2, 1),
+            torch.nn.Linear(config.HIDDEN_SIZE*4, 1),
             torch.nn.Sigmoid(),
         )
 
@@ -42,13 +42,27 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out_y = self.automodel(ids_y, attention_mask=mask_y)
 
         # Mean-max pooler
-        out_x = out_x.last_hidden_state
-        out_y = out_y.last_hidden_state
+        #out_x = out_x.last_hidden_state
+        out_x = torch.stack(
+            tuple(out_x[-i - 1] for i in range(config.n_last_hidden)), dim=0)
+        out_mean_x = torch.mean(out_x, dim=0)
+        out_max_x, _ = torch.max(out_x, dim=0)
+        pooled_last_hidden_states_x = torch.cat((out_mean_x, out_max_x), dim=-1)
+        
 
-        weights_x = self.attention(out_x, mask_x)
-        context_vector_x = torch.sum(weights_x * out_x, dim=1) 
-        weights_y = self.attention(out_y, mask_y)
-        context_vector_y = torch.sum(weights_y * out_y, dim=1) 
+        out_y = torch.stack(
+            tuple(out_y[-i - 1] for i in range(config.n_last_hidden)), dim=0)
+        out_mean_y = torch.mean(out_y, dim=0)
+        out_max_y, _ = torch.max(out_y, dim=0)
+        pooled_last_hidden_states_y = torch.cat((out_mean_y, out_max_y), dim=-1)
+
+
+        #out_y = out_y.last_hidden_state
+
+        weights_x = self.attention(pooled_last_hidden_states_x, mask_x)
+        context_vector_x = torch.sum(weights_x * pooled_last_hidden_states_x, dim=1) 
+        weights_y = self.attention(pooled_last_hidden_states_y, mask_y)
+        context_vector_y = torch.sum(weights_y * pooled_last_hidden_states_y, dim=1) 
 
         context_vector = torch.cat([context_vector_x, context_vector_y], dim=-1)
 
