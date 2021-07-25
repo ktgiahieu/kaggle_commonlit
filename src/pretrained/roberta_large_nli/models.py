@@ -42,8 +42,8 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out_y = self.automodel(ids_y, attention_mask=mask_y)
 
         # Mean-max pooler
-        out_x = out_x.last_hidden_states[:,0,:]
-        out_y = out_y.last_hidden_states[:,0,:]
+        out_x = out_x.last_hidden_state[:,0,:]
+        out_y = out_y.last_hidden_state[:,0,:]
 
         context_vector = torch.cat([out_x, out_y], dim=-1)
         #out = torch.stack(
