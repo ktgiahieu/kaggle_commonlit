@@ -42,14 +42,14 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out_y = self.automodel(ids_y, attention_mask=mask_y)
 
         # Mean-max pooler
-        #out_x = out_x.last_hidden_state
+        out_x = out_x.hidden_states
         out_x = torch.stack(
             tuple(out_x[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean_x = torch.mean(out_x, dim=0)
         out_max_x, _ = torch.max(out_x, dim=0)
         pooled_last_hidden_states_x = torch.cat((out_mean_x, out_max_x), dim=-1)
         
-
+        out_y = out_y.hidden_states
         out_y = torch.stack(
             tuple(out_y[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean_y = torch.mean(out_y, dim=0)
@@ -57,7 +57,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         pooled_last_hidden_states_y = torch.cat((out_mean_y, out_max_y), dim=-1)
 
 
-        #out_y = out_y.last_hidden_state
+        
 
         weights_x = self.attention(pooled_last_hidden_states_x, mask_x)
         context_vector_x = torch.sum(weights_x * pooled_last_hidden_states_x, dim=1) 
