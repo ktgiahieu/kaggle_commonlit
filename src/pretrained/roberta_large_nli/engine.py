@@ -44,7 +44,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
             optimizer.step()
             scheduler.step()
 
-            losses.update(loss.item(), ids.size(0))
+            losses.update(loss.item(), ids_x.size(0))
             tk0.set_postfix(loss=np.sqrt(losses.avg))
 
             #if step >= last_eval_step + eval_period:
@@ -100,7 +100,7 @@ def eval_fn(data_loader, model, device, iteration, writer):
 
             loss = loss_fn(outputs, labels)
 
-            losses.update(loss.item(), ids.size(0))
+            losses.update(loss.item(), ids_x.size(0))
     
     writer.add_scalar('Loss/val', losses.avg, iteration)
     print(f'Valid loss iter {iteration}= {losses.avg}')
