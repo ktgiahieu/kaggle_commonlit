@@ -11,15 +11,12 @@ def loss_fn(outputs, labels):
 
 
 def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, writer, model_path, scheduler=None):
-    losses = utils.AverageMeter()
-
-
-
     best_val_rmse = None
     step = 0
     last_eval_step = 0
     eval_period = config.EVAL_SCHEDULE[0][1]   
     for epoch in range(config.EPOCHS):
+        losses = utils.AverageMeter()
         tk0 = tqdm.tqdm(train_data_loader, total=len(train_data_loader))
         for bi, d in enumerate(tk0):
             ids_x = d['ids_x']
