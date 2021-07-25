@@ -7,7 +7,7 @@ import utils
 
 
 def loss_fn(outputs, labels):
-    loss_fct = torch.nn.MSELoss()
+    loss_fct = torch.nn.BCELoss()
     return loss_fct(outputs, labels)
 
 
@@ -33,8 +33,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
 
             model.train()
             model.zero_grad()
-            outputs = \
-                model(ids=ids, mask=mask)
+            outputs = model(ids=ids, mask=mask)
         
             loss = loss_fn(outputs, labels)
             loss.backward()
@@ -44,29 +43,34 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
             losses.update(loss.item(), ids.size(0))
             tk0.set_postfix(loss=np.sqrt(losses.avg))
 
-            if step >= last_eval_step + eval_period:
-                val_rmse = eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)                           
-                last_eval_step = step
-                for rmse, period in config.EVAL_SCHEDULE:
-                    if val_rmse >= rmse:
-                        eval_period = period
-                        break                               
+            #if step >= last_eval_step + eval_period:
+            #    val_rmse = eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)                           
+            #    last_eval_step = step
+            #    for rmse, period in config.EVAL_SCHEDULE:
+            #        if val_rmse >= rmse:
+            #            eval_period = period
+            #            break                               
                 
-                if not best_val_rmse or val_rmse < best_val_rmse:                    
-                    best_val_rmse = val_rmse
-                    best_epoch = epoch
-                    torch.save(model.state_dict(), model_path)
-                    print(f"New best_val_rmse: {best_val_rmse:0.4}")
-                else:       
-                    print(f"Still best_val_rmse: {best_val_rmse:0.4}",
-                            f"(from epoch {best_epoch})")                                    
+            #    if not best_val_rmse or val_rmse < best_val_rmse:                    
+            #        best_val_rmse = val_rmse
+            #        best_epoch = epoch
+            #        torch.save(model.state_dict(), model_path)
+            #        print(f"New best_val_rmse: {best_val_rmse:0.4}")
+            #    else:       
+            #        print(f"Still best_val_rmse: {best_val_rmse:0.4}",
+            #                f"(from epoch {best_epoch})")                                    
                     
-            step += 1
+            #step += 1
             
-        writer.add_scalar('Loss/train', np.sqrt(losses.avg), (epoch+1)*len(train_data_loader))
+        writer.add_scalar('Loss/train', losses.avg, (epoch+1)*len(train_data_loader))
 
-        rmse_score = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
-    return rmse_score
+        valid_loss = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
+
+    torch.save({
+        "model_state_dict": model.automodel.state_dict(),
+        "my_param": parameters,
+    }, model_path)
+    return valid_loss
 
 def eval_fn(data_loader, model, device, iteration, writer):
     model.eval()
@@ -88,6 +92,6 @@ def eval_fn(data_loader, model, device, iteration, writer):
 
             losses.update(loss.item(), ids.size(0))
     
-    writer.add_scalar('Loss/val', np.sqrt(losses.avg), iteration)
-    print(f'RMSE iter {iteration}= {np.sqrt(losses.avg)}')
-    return np.sqrt(losses.avg)
+    writer.add_scalar('Loss/val', losses.avg, iteration)
+    print(f'Valid loss iter {iteration}= losses.avg}')
+    return losses.avg

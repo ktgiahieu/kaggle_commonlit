@@ -12,7 +12,8 @@ comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
 my_model_dataset = 'commonlit-roberta-large-nli'
 if is_kaggle:
-    TRAINING_FILE = f'../input/{comp_name}/train.csv'
+    TRAINING_FILE = f'../input/{my_impl}/data/train_nli.csv'
+    VALID_FILE = f'../input/{my_impl}/data/valid_nli.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
     MODEL_SAVE_PATH = f'.'
@@ -25,7 +26,8 @@ else: #colab
     drive_name = 'Commonlit'
     model_save = 'roberta_large_nli'
     
-    TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
+    TRAINING_FILE = f'/content/{repo_name}/data/train_nli.csv'
+    VALID_FILE = f'/content/{repo_name}/data/valid_nli.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
     SUB_FILE = f'/content/{repo_name}/data/sample_submission.csv'
     MODEL_SAVE_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/pretrain/{model_save}'
@@ -35,9 +37,8 @@ else: #colab
     MODEL_CONFIG = 'roberta-large'
 
 # Model params
-SEEDS = [1000, 25, 42]
-N_FOLDS = 5
-EPOCHS = 3
+SEEDS = [1000]
+EPOCHS = 1
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
@@ -61,8 +62,8 @@ TOKENIZER = AutoTokenizer.from_pretrained(
 HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
 N_LAST_HIDDEN = 4
-BERT_DROPOUT = 0
-CLASSIFIER_DROPOUT = 0
+BERT_DROPOUT = 0.1
+CLASSIFIER_DROPOUT = 0.1
 WARMUP_RATIO = 0.125
 
 USE_SWA = False

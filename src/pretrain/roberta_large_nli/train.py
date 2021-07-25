@@ -14,17 +14,14 @@ import engine
 import utils
 
 
-def run(fold, seed):
-    dfx = pd.read_csv(config.TRAINING_FILE)
-    
-    dfx.rename(columns={'excerpt': 'text', 'target': 'label'}, inplace=True)
-
-    df_train = dfx[dfx.kfold != fold].reset_index(drop=True)
-    df_valid = dfx[dfx.kfold == fold].reset_index(drop=True)
+def run(seed):
+    df_train = pd.read_csv(config.TRAINING_FILE)
+    df_valid = pd.read_csv(config.VALID_FILE)
 
     train_dataset = dataset.CommonlitDataset(
-        texts=df_train.text.values,
-        labels=df_train.label.values)
+        texts_x=df_train.excerpt_x.values,
+        texts_y=df_train.excerpt_y.values,
+        labels=df_train.target.values)
 
     train_data_loader = torch.utils.data.DataLoader(
         train_dataset,
@@ -33,8 +30,9 @@ def run(fold, seed):
         shuffle=True)
 
     valid_dataset = dataset.CommonlitDataset(
-        texts=df_valid.text.values,
-        labels=df_valid.label.values)
+        texts_x=df_valid.excerpt_x.values,
+        texts_y=df_valid.excerpt_y.values,
+        labels=df_valid.target.value)
 
     valid_data_loader = torch.utils.data.DataLoader(
         valid_dataset,
@@ -77,30 +75,26 @@ def run(fold, seed):
     if not os.path.isdir(f'{config.MODEL_SAVE_PATH}'):
         os.makedirs(f'{config.MODEL_SAVE_PATH}')
 
-    print(f'Training is starting for fold={fold}')
-
-    rmse_score = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
-                    device, writer, f'{config.MODEL_SAVE_PATH}/model_{fold}_{seed}.bin', scheduler=scheduler)
+    print(f'Training is starting')
+    torch.save({
+        "model_state_dict": model.automodel.state_dict(),
+        "my_param": parameters,
+    }, model_path)
+    valid_loss = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
+                    device, writer, f'{config.MODEL_SAVE_PATH}/model_{seed}.bin', scheduler=scheduler)
 
     if config.USE_SWA:
         optimizer.swap_swa_sgd()
 
-    return rmse_score
+    return valid_loss
 
 
 if __name__ == '__main__':
     for seed in config.SEEDS:
         utils.seed_everything(seed=seed)
         print(f"Training with SEED={seed}")
-        fold_scores = []
-        for i in range(config.N_FOLDS):
-            writer = SummaryWriter(f"logs/fold{i}_seed{seed}")
-            fold_score = run(i, seed)
-            fold_scores.append(fold_score)
-            writer.close()
+        writer = SummaryWriter(f"logs/fold{i}_seed{seed}")
+        valid_loss = run(i, seed)
+        writer.close()
 
-        print('\nScores without SWA:')
-        for i in range(config.N_FOLDS):
-            print(f'Fold={i}, RMSE = {fold_scores[i]}')
-        print(f'Mean = {np.mean(fold_scores)}')
-        print(f'Std = {np.std(fold_scores)}')
+        print(f'Fold={i}, Valid loss = {valid_loss}')

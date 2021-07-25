@@ -3,13 +3,14 @@ import torch
 
 import config
 
-def process_data(text, label,
+def process_data(text_x, text_y, label,
                  tokenizer, max_len):
     """Preprocesses one data sample and returns a dict
     with targets and other useful info.
     """
     encoded_dict = tokenizer.encode_plus(
-        text,                      # Sentence to encode.
+        text_x,                      # Sentence to encode.
+        text_y,
         add_special_tokens = True, # Add '[CLS]' and '[SEP]'
         max_length = config.MAX_LEN,           # Pad & truncate all sentences.
         padding = 'max_length',
@@ -30,8 +31,9 @@ def process_data(text, label,
 
 
 class CommonlitDataset:
-    def __init__(self, texts, labels):
-        self.texts = texts
+    def __init__(self, texts_x, texts_y, labels):
+        self.texts_x = texts_x
+        self.texts_y = texts_y
         self.labels = labels
         self.max_len = config.MAX_LEN
         self.tokenizer = config.TOKENIZER
@@ -43,7 +45,8 @@ class CommonlitDataset:
         """Returns preprocessed data sample as dict with
         data converted to tensors.
         """
-        data = process_data(self.texts[item],
+        data = process_data(self.texts_x[item],
+                            self.texts_y[item],
                             self.labels[item],
                             self.tokenizer,
                             self.max_len)
