@@ -76,9 +76,11 @@ def run(seed):
         os.makedirs(f'{config.MODEL_SAVE_PATH}')
 
     print(f'Training is starting')
-    valid_loss = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
-                    device, writer, f'{config.MODEL_SAVE_PATH}/model_{seed}.bin', scheduler=scheduler)
-
+    torch.save(model.automodel.state_dict(), f'{config.MODEL_SAVE_PATH}/model_{seed}.bin')
+    torch.save(model.state_dict(), f'{config.MODEL_SAVE_PATH}/model_full_1000.bin')
+    #valid_loss = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
+    #                device, writer, f'{config.MODEL_SAVE_PATH}/model_{seed}.bin', scheduler=scheduler)
+    valid_loss = 0
     if config.USE_SWA:
         optimizer.swap_swa_sgd()
 
@@ -93,4 +95,4 @@ if __name__ == '__main__':
         valid_loss = run(seed)
         writer.close()
 
-        print(f'Fold={i}, Valid loss = {valid_loss}')
+        print(f'Valid loss = {valid_loss}')
