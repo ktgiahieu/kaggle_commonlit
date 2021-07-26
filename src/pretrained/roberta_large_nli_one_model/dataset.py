@@ -10,9 +10,8 @@ def process_data(text_x, text_y, label,
     """
     encoded_dict_x = tokenizer.encode_plus(
         text_x,                      # Sentence to encode.
-        text_y,
         add_special_tokens = True, # Add '[CLS]' and '[SEP]'
-        max_length = 248,           # Pad & truncate all sentences.
+        max_length = 128,           # Pad & truncate all sentences.
         padding = 'max_length',
 		return_attention_mask = True,   # Construct attn. masks.
         return_tensors = 'pt',     # Return pytorch tensors.
@@ -21,7 +20,7 @@ def process_data(text_x, text_y, label,
     encoded_dict_y = tokenizer.encode_plus(
         text_y,
         add_special_tokens = True, # Add '[CLS]' and '[SEP]'
-        max_length = 248,           # Pad & truncate all sentences.
+        max_length = 128,           # Pad & truncate all sentences.
         padding = 'max_length',
 		return_attention_mask = True,   # Construct attn. masks.
         return_tensors = 'pt',     # Return pytorch tensors.
