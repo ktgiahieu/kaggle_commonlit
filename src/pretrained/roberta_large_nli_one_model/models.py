@@ -38,8 +38,11 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         )
 
     def forward(self, ids_x, ids_y, mask_x, mask_y):
-        ids = torch.cat([ids_x, ids_y], dim=1)
-        mask = torch.cat([mask_x, mask_y], dim=1)
+        #ids = torch.cat([ids_x, ids_y], dim=1)
+        #mask = torch.cat([mask_x, mask_y], dim=1)
+        ids = ids_x
+        mask = mask_x
+        
         out = self.automodel(ids, attention_mask=mask)
         #out_y = self.automodel(ids_y, attention_mask=mask_y)
 
