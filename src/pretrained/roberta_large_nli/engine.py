@@ -74,7 +74,18 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
                 writer.add_scalar('Loss/train', losses.avg, (epoch+1)*len(train_data_loader))
     
         writer.add_scalar('Loss/train', losses.avg, (epoch+1)*len(train_data_loader))
-        valid_loss = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
+
+        val_rmse = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
+        if not best_val_rmse or val_rmse < best_val_rmse:                    
+            best_val_rmse = val_rmse
+            best_epoch = epoch
+            model.save_pretrained(model_path)
+            print(f"New best_val_rmse: {best_val_rmse:0.4}")
+        else:       
+            print(f"Still best_val_rmse: {best_val_rmse:0.4}",
+                    f"(from epoch {best_epoch})")
+        writer.add_scalar('Loss/train', losses.avg, (epoch+1)*len(train_data_loader))
+        valid_loss = val_rmse
 
     config.TOKENIZER.save_pretrained(model_path)
     return valid_loss
