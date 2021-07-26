@@ -41,44 +41,31 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out_x = self.automodel(ids_x, attention_mask=mask_x)
         out_y = self.automodel(ids_y, attention_mask=mask_y)
 
-        out_x = out_x.last_hidden_state[:,0,:]
-        out_y = out_y.last_hidden_state[:,0,:]
+        #out_x = out_x.last_hidden_state[:,0,:]
+        #out_y = out_y.last_hidden_state[:,0,:]
 
-        context_vector = torch.cat([out_x, out_y], dim=-1)
+        #context_vector = torch.cat([out_x, out_y], dim=-1)
 
         # Mean-max pooler
-        #out_x = out_x.hidden_states
-        #out_x = torch.stack(
-        #    tuple(out_x[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
-        #out_mean_x = torch.mean(out_x, dim=0)
-        #out_max_x, _ = torch.max(out_x, dim=0)
-        #pooled_last_hidden_states_x = torch.cat((out_mean_x, out_max_x), dim=-1)
+        out_x = out_x.hidden_states
+        out_x = torch.stack(
+            tuple(out_x[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
+        out_mean_x = torch.mean(out_x, dim=0)
+        out_max_x, _ = torch.max(out_x, dim=0)
+        pooled_last_hidden_states_x = torch.cat((out_mean_x, out_max_x), dim=-1)
         
-        #out_y = out_y.hidden_states
-        #out_y = torch.stack(
-        #    tuple(out_y[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
-        #out_mean_y = torch.mean(out_y, dim=0)
-        #out_max_y, _ = torch.max(out_y, dim=0)
-        #pooled_last_hidden_states_y = torch.cat((out_mean_y, out_max_y), dim=-1)
+        out_y = out_y.hidden_states
+        out_y = torch.stack(
+            tuple(out_y[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
+        out_mean_y = torch.mean(out_y, dim=0)
+        out_max_y, _ = torch.max(out_y, dim=0)
+        pooled_last_hidden_states_y = torch.cat((out_mean_y, out_max_y), dim=-1)
 
+        weights_x = self.attention(pooled_last_hidden_states_x, mask_x)
+        context_vector_x = torch.sum(weights_x * pooled_last_hidden_states_x, dim=1) 
+        weights_y = self.attention(pooled_last_hidden_states_y, mask_y)
+        context_vector_y = torch.sum(weights_y * pooled_last_hidden_states_y, dim=1) 
 
-        
-
-        #weights_x = self.attention(pooled_last_hidden_states_x, mask_x)
-        #context_vector_x = torch.sum(weights_x * pooled_last_hidden_states_x, dim=1) 
-        #weights_y = self.attention(pooled_last_hidden_states_y, mask_y)
-        #context_vector_y = torch.sum(weights_y * pooled_last_hidden_states_y, dim=1) 
-
-        #context_vector = torch.cat([context_vector_x, context_vector_y], dim=-1)
-
-        #out = torch.stack(
-        #    tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
-        #out_mean = torch.mean(out, dim=0)
-        #out_max, _ = torch.max(out, dim=0)
-        #pooled_last_hidden_states = torch.cat((out_mean, out_max), dim=-1)
-
-        ##self attention
-        #weights = self.attention(pooled_last_hidden_states, mask)
-        #context_vector = torch.sum(weights * pooled_last_hidden_states, dim=1) 
+        context_vector = torch.cat([context_vector_x, context_vector_y], dim=-1)
 
         return self.classifier(context_vector)
