@@ -38,7 +38,7 @@ else: #colab
 
 # Model params
 SEEDS = [1000]
-EPOCHS = 3
+EPOCHS = 1
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
@@ -75,5 +75,5 @@ NUM_SHOW_ITER = 20
 
 #Author hyperparams
 HEAD_LEARNING_RATE = 1e-3
-LEARNING_RATES_RANGE = [1e-4, 2e-4]
-WEIGHT_DECAY = 0.001
+LEARNING_RATES_RANGE = [2e-5, 2e-5]
+WEIGHT_DECAY = 0.01
