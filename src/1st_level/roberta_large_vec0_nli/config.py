@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 model_type = 'roberta-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-roberta-large-v1-nli'
+my_model_dataset = 'commonlit-roberta-large-vec0-nli'
 if is_kaggle:
     TRAINING_FILE = f'../input/{my_impl}/data/train_folds.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'roberta_large_v1_nli'
+    model_save = 'roberta_large_vec0_nli'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -37,7 +37,7 @@ else: #colab
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 5
+EPOCHS = 3
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
