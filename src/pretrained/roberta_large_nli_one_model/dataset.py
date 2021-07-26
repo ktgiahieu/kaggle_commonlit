@@ -12,7 +12,7 @@ def process_data(text_x, text_y, label,
         text_x,                      # Sentence to encode.
         text_y,
         add_special_tokens = True, # Add '[CLS]' and '[SEP]'
-        max_length = 512,           # Pad & truncate all sentences.
+        max_length = 248,           # Pad & truncate all sentences.
         padding = 'max_length',
 		return_attention_mask = True,   # Construct attn. masks.
         return_tensors = 'pt',     # Return pytorch tensors.
