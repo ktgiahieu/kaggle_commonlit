@@ -37,7 +37,7 @@ else: #colab
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 10
+EPOCHS = 20
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
@@ -48,11 +48,11 @@ MAX_LEN = 248
 
 EVAL_SCHEDULE = [
                 (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 16*ACCUMULATION_STEPS), 
-                (0.49, 8*ACCUMULATION_STEPS), 
-                (0.48, 4*ACCUMULATION_STEPS), 
-                (0.47, 2*ACCUMULATION_STEPS), 
-                (-1., 1*ACCUMULATION_STEPS)
+                (0.50, 40*ACCUMULATION_STEPS), 
+                (0.49, 20*ACCUMULATION_STEPS), 
+                (0.48, 15*ACCUMULATION_STEPS), 
+                (0.47, 10*ACCUMULATION_STEPS), 
+                (-1., 8*ACCUMULATION_STEPS)
                 ]
 
 TOKENIZER = AutoTokenizer.from_pretrained(
@@ -63,7 +63,7 @@ ATTENTION_HIDDEN_SIZE = 1024
 N_LAST_HIDDEN = 4
 BERT_DROPOUT = 0
 CLASSIFIER_DROPOUT = 0
-WARMUP_RATIO = 0.0005
+WARMUP_RATIO = 0.075
 
 USE_SWA = False
 SWA_RATIO = 0.9
@@ -73,6 +73,6 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-HEAD_LEARNING_RATE = 5e-4
-LEARNING_RATES_RANGE = [2e-5, 5e-5]
+HEAD_LEARNING_RATE = 1e-4
+LEARNING_RATES_RANGE = [1e-5, 2e-5]
 WEIGHT_DECAY = 0.01
