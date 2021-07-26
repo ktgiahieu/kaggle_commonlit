@@ -32,12 +32,12 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = '/content/roberta-large-nli-one-model'
+    MODEL_CONFIG = '/content/roberta-large-nli'
 
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 5
+EPOCHS = 3
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
