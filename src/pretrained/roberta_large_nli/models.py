@@ -32,8 +32,12 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         self.attention = SelfAttention()
 
         self.classifier = torch.nn.Sequential(
+            #torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
+            #torch.nn.Linear(config.HIDDEN_SIZE*4, config.HIDDEN_SIZE*3),
+            #torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
+            #torch.nn.Linear(config.HIDDEN_SIZE*3, 1),
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE*2, 1),
+            torch.nn.Linear(config.HIDDEN_SIZE*4, 1),
             torch.nn.Sigmoid(),
         )
 
