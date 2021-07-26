@@ -38,7 +38,7 @@ else: #colab
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 4
+EPOCHS = 5
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
@@ -53,10 +53,10 @@ TOKENIZER = AutoTokenizer.from_pretrained(
 EVAL_SCHEDULE = [
                 (0.6, 70*ACCUMULATION_STEPS),
                 (0.50, 16*ACCUMULATION_STEPS), 
-                (0.49, 8*ACCUMULATION_STEPS), 
-                (0.48, 4*ACCUMULATION_STEPS), 
-                (0.47, 2*ACCUMULATION_STEPS), 
-                (-1., 1*ACCUMULATION_STEPS)
+                (0.49, 15*ACCUMULATION_STEPS), 
+                (0.48, 14*ACCUMULATION_STEPS), 
+                (0.47, 12*ACCUMULATION_STEPS), 
+                (-1., 10*ACCUMULATION_STEPS)
                 ]
 
 HIDDEN_SIZE = 1024
@@ -64,7 +64,7 @@ ATTENTION_HIDDEN_SIZE = 1024
 N_LAST_HIDDEN = 4
 BERT_DROPOUT = 0
 CLASSIFIER_DROPOUT = 0
-WARMUP_RATIO = 0.125
+WARMUP_RATIO = 0.075
 
 USE_SWA = False
 SWA_RATIO = 0.9
