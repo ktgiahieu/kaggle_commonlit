@@ -44,26 +44,31 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
             losses.update(loss.item(), ids.size(0))
             tk0.set_postfix(loss=np.sqrt(losses.avg))
 
-            if step >= last_eval_step + eval_period:
-                val_rmse = eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)                           
-                last_eval_step = step
-                for rmse, period in config.EVAL_SCHEDULE:
-                    if val_rmse >= rmse:
-                        eval_period = period
-                        break                               
+            if (bi+1) % config.ACCUMULATION_STEPS    == 0:             # Wait for several backward steps
+                optimizer.step()                            # Now we can do an optimizer step
+                scheduler.step()
+                model.zero_grad()                           # Reset gradients tensors
+                if step >= last_eval_step + eval_period:
+                    val_rmse = eval_fn(valid_data_loader, model, device, epoch*len(train_data_loader) + bi, writer)                           
+                    last_eval_step = step
+                    for rmse, period in config.EVAL_SCHEDULE:
+                        if val_rmse >= rmse:
+                            eval_period = period
+                            break                               
                 
-                if not best_val_rmse or val_rmse < best_val_rmse:                    
-                    best_val_rmse = val_rmse
-                    best_epoch = epoch
-                    torch.save(model.state_dict(), model_path)
-                    print(f"New best_val_rmse: {best_val_rmse:0.4}")
-                else:       
-                    print(f"Still best_val_rmse: {best_val_rmse:0.4}",
-                            f"(from epoch {best_epoch})")                                    
-                    
+                    if not best_val_rmse or val_rmse < best_val_rmse:                    
+                        best_val_rmse = val_rmse
+                        best_epoch = epoch
+                        torch.save(model.state_dict(), f'/content/{model_path_filename}')
+                        print(f"New best_val_rmse: {best_val_rmse:0.4}")
+                    else:       
+                        print(f"Still best_val_rmse: {best_val_rmse:0.4}",
+                                f"(from epoch {best_epoch})")                                    
             step += 1
-            
+
         writer.add_scalar('Loss/train', np.sqrt(losses.avg), (epoch+1)*len(train_data_loader))
+        copyfile(f'/content/{model_path_filename}', model_path)
+        print("Copied best checkpoint to google drive.")
 
         rmse_score = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
     return rmse_score
