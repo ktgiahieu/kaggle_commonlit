@@ -19,7 +19,7 @@ if is_kaggle:
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/commonlit-roberta-large-pretrain/clrp_roberta_large'
+    MODEL_CONFIG = '../input/roberta-large-pretrained-mlm/clrp_roberta_large'
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
