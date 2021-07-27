@@ -1,3 +1,5 @@
+from shutil import copyfile
+
 import numpy as np
 import torch
 import tqdm
@@ -13,6 +15,7 @@ def loss_fn(outputs, labels):
 
 
 def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, writer, model_path, scheduler=None):
+    model_path_filename = model_path.split('/')[-1]
     best_val_rmse = None
     step = 0
     last_eval_step = 0
@@ -62,7 +65,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
                     if not best_val_rmse or val_rmse < best_val_rmse:                    
                         best_val_rmse = val_rmse
                         best_epoch = epoch
-                        torch.save(model.state_dict(), model_path)
+                        torch.save(model.state_dict(), f'/content/{model_path_filename}')
                         print(f"New best_val_rmse: {best_val_rmse:0.4}")
                     else:       
                         print(f"Still best_val_rmse: {best_val_rmse:0.4}",
@@ -70,6 +73,8 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
             step += 1
 
         writer.add_scalar('Loss/train', np.sqrt(losses.avg), (epoch+1)*len(train_data_loader))
+        copyfile(f'/content/{model_path_filename}', model_path)
+        print("Copied best checkpoint to google drive.")
 
         rmse_score = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
     return rmse_score
