@@ -47,7 +47,8 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
 
             loss = loss / config.ACCUMULATION_STEPS   
             loss.backward()
-
+            torch.cuda.empty_cache()
+            gc.collect()
 
 
             if (bi+1) % config.ACCUMULATION_STEPS    == 0:             # Wait for several backward steps
@@ -72,11 +73,15 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
                                 f"(from epoch {best_epoch})")                                    
             step += 1
 
+        torch.cuda.empty_cache()
+        gc.collect()
         writer.add_scalar('Loss/train', np.sqrt(losses.avg), (epoch+1)*len(train_data_loader))
         copyfile(f'/content/{model_path_filename}', model_path)
         print("Copied best checkpoint to google drive.")
 
         rmse_score = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
+        torch.cuda.empty_cache()
+        gc.collect()
     torch.cuda.empty_cache()
     gc.collect()
     return rmse_score
