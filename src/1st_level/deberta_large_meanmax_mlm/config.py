@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 model_type = 'deberta-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-deberta-large-v1-mlm'
+my_model_dataset = 'commonlit-deberta-large-meanmax-mlm'
 if is_kaggle:
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'deberta_large_v1_mlm'
+    model_save = 'deberta_large_mean_max_mlm'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds_bins.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -42,21 +42,21 @@ EPOCHS = 4
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 4
-VALID_BATCH_SIZE = 4
-ACCUMULATION_STEPS = 2
+TRAIN_BATCH_SIZE = 2
+VALID_BATCH_SIZE = 2
+ACCUMULATION_STEPS = 1
 MAX_LEN = 248  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
 EVAL_SCHEDULE = [
-                (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 16*ACCUMULATION_STEPS), 
-                (0.49, 8*ACCUMULATION_STEPS), 
-                (0.48, 4*ACCUMULATION_STEPS), 
-                (0.47, 2*ACCUMULATION_STEPS), 
-                (-1., 1*ACCUMULATION_STEPS)
+                (0.6, 140*ACCUMULATION_STEPS),
+                (0.50, 32*ACCUMULATION_STEPS), 
+                (0.49, 16*ACCUMULATION_STEPS), 
+                (0.48, 8*ACCUMULATION_STEPS), 
+                (0.47, 4*ACCUMULATION_STEPS), 
+                (-1., 2*ACCUMULATION_STEPS)
                 ]
 
 HIDDEN_SIZE = 1024
@@ -75,5 +75,5 @@ NUM_SHOW_ITER = 20
 
 #Author hyperparams
 HEAD_LEARNING_RATE = 1e-3
-LEARNING_RATES_RANGE = [8e-6, 1e-5]
+LEARNING_RATES_RANGE = [5e-6, 1e-5]
 WEIGHT_DECAY = 0.01

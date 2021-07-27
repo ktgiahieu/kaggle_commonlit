@@ -7,10 +7,10 @@ import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
-model_type = 'deberta-v2-xlarge'
+model_type = 'deberta-xlarge'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-deberta-v2-xlarge-meanmax'
+my_model_dataset = 'commonlit-deberta-xlarge-meanmax'
 if is_kaggle:
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -19,11 +19,11 @@ if is_kaggle:
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/deberta-v2-xlarge'
+    MODEL_CONFIG = '../input/deberta-xlarge'
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'deberta_v2_xlarge_meanmax'
+    model_save = 'deberta_xlarge_meanmax'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -32,30 +32,34 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'microsoft/deberta-v2-xlarge'
+    MODEL_CONFIG = 'microsoft/deberta-xlarge'
 
 
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 6
+EPOCHS = 4
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
 TRAIN_BATCH_SIZE = 1
 VALID_BATCH_SIZE = 1
-ACCUMULATION_STEPS = 4
-MAX_LEN = 192  # actually = inf
+ACCUMULATION_STEPS = 1
+MAX_LEN = 248  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
 EVAL_SCHEDULE = [
-                (0.48, 70*ACCUMULATION_STEPS), 
-                (-1., 10*ACCUMULATION_STEPS)
+                (0.6, 280*ACCUMULATION_STEPS),
+                (0.50, 70*ACCUMULATION_STEPS), 
+                (0.49, 32*ACCUMULATION_STEPS), 
+                (0.48, 16*ACCUMULATION_STEPS), 
+                (0.47, 8*ACCUMULATION_STEPS), 
+                (-1., 4*ACCUMULATION_STEPS)
                 ]
 
-HIDDEN_SIZE = 1536
+HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
 N_LAST_HIDDEN = 4
 BERT_DROPOUT = 0

@@ -7,23 +7,23 @@ import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
-model_type = 'roberta-large'
+model_type = 'deberta-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-roberta-large-v1-nli'
+my_model_dataset = 'commonlit-deberta-large-meanmax'
 if is_kaggle:
-    TRAINING_FILE = f'../input/{my_impl}/data/train_folds.csv'
+    TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
-    MODEL_SAVE_PATH = f'.'
+    MODEL_SAVE_PATH = f'../input/{my_model_dataset}'
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/commonlit-roberta-large-nli'
+    MODEL_CONFIG = '../input/deberta-large'
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'roberta_large_v1_nli'
+    model_save = 'deberta_large_meanmax'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -32,38 +32,39 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = '/content/roberta-large-nli'
+    MODEL_CONFIG = 'microsoft/deberta-large'
+
 
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 5
+EPOCHS = 4
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 4
-VALID_BATCH_SIZE = 4
+TRAIN_BATCH_SIZE = 2
+VALID_BATCH_SIZE = 2
 ACCUMULATION_STEPS = 1
-MAX_LEN = 248
-
-EVAL_SCHEDULE = [
-                (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 40*ACCUMULATION_STEPS), 
-                (0.49, 20*ACCUMULATION_STEPS), 
-                (0.48, 15*ACCUMULATION_STEPS), 
-                (0.47, 10*ACCUMULATION_STEPS), 
-                (-1., 8*ACCUMULATION_STEPS)
-                ]
+MAX_LEN = 248  # actually = inf
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
+
+EVAL_SCHEDULE = [
+                (0.6, 140*ACCUMULATION_STEPS),
+                (0.50, 32*ACCUMULATION_STEPS), 
+                (0.49, 16*ACCUMULATION_STEPS), 
+                (0.48, 8*ACCUMULATION_STEPS), 
+                (0.47, 4*ACCUMULATION_STEPS), 
+                (-1., 2*ACCUMULATION_STEPS)
+                ]
 
 HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
 N_LAST_HIDDEN = 4
 BERT_DROPOUT = 0
 CLASSIFIER_DROPOUT = 0
-WARMUP_RATIO = 0.075
+WARMUP_RATIO = 0.125
 
 USE_SWA = False
 SWA_RATIO = 0.9
@@ -73,6 +74,6 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-HEAD_LEARNING_RATE = 1e-4
-LEARNING_RATES_RANGE = [1e-5, 2e-5]
+HEAD_LEARNING_RATE = 1e-3
+LEARNING_RATES_RANGE = [3e-6, 8e-6]
 WEIGHT_DECAY = 0.01
