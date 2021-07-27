@@ -15,6 +15,7 @@ def loss_fn(outputs, labels):
 
 
 def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, writer, model_path, scheduler=None):
+    model_path_filename = model_path.split('/')[-1]
     best_val_rmse = None
     step = 0
     last_eval_step = 0
