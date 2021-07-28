@@ -32,7 +32,7 @@ def run():
     data_loader = torch.utils.data.DataLoader(
         test_dataset,
         shuffle=False,
-        batch_size=config.VALID_BATCH_SIZE,
+        batch_size=config.TEST_BATCH_SIZE,
         num_workers=1)
     
     predicted_labels = []
