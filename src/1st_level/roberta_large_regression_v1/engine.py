@@ -3,6 +3,7 @@ from shutil import copyfile
 import numpy as np
 import torch
 import tqdm
+import gc
 
 import config
 import utils
@@ -14,17 +15,18 @@ def loss_fn(outputs, labels):
 
 
 def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, writer, model_path, scheduler=None):
-    losses = utils.AverageMeter()
-
-
-
+    model_path_filename = model_path.split('/')[-1]
     best_val_rmse = None
     step = 0
     last_eval_step = 0
     eval_period = config.EVAL_SCHEDULE[0][1]   
     for epoch in range(config.EPOCHS):
+        losses = utils.AverageMeter()
         tk0 = tqdm.tqdm(train_data_loader, total=len(train_data_loader))
+        model.zero_grad()
         for bi, d in enumerate(tk0):
+            torch.cuda.empty_cache()
+            gc.collect()
             ids = d['ids']
             mask = d['mask']
             labels = d['labels']
@@ -34,17 +36,19 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
             labels = labels.to(device, dtype=torch.float)
 
             model.train()
-            model.zero_grad()
+            
             outputs = \
                 model(ids=ids, mask=mask)
         
             loss = loss_fn(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            scheduler.step()
 
             losses.update(loss.item(), ids.size(0))
             tk0.set_postfix(loss=np.sqrt(losses.avg))
+
+            loss = loss / config.ACCUMULATION_STEPS   
+            loss.backward()
+
+
 
             if (bi+1) % config.ACCUMULATION_STEPS    == 0:             # Wait for several backward steps
                 optimizer.step()                            # Now we can do an optimizer step
