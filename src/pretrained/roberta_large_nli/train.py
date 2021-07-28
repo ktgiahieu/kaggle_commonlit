@@ -77,7 +77,7 @@ def run(seed):
 
     print(f'Training is starting')
     valid_loss = engine.train_fn(train_data_loader, valid_data_loader, model, optimizer,
-                    device, writer, f'{config.MODEL_SAVE_PATH}/model_248_2k_meanmax', scheduler=scheduler)
+                    device, writer, f'{config.MODEL_SAVE_PATH}/model_248_2k_meanmax_bs1', scheduler=scheduler)
     if config.USE_SWA:
         optimizer.swap_swa_sgd()
 
