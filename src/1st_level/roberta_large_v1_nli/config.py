@@ -41,18 +41,18 @@ EPOCHS = 5
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 4
-VALID_BATCH_SIZE = 4
+TRAIN_BATCH_SIZE = 1
+VALID_BATCH_SIZE = 1
 ACCUMULATION_STEPS = 1
 MAX_LEN = 248
 
 EVAL_SCHEDULE = [
-                (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 40*ACCUMULATION_STEPS), 
-                (0.49, 20*ACCUMULATION_STEPS), 
-                (0.48, 15*ACCUMULATION_STEPS), 
-                (0.47, 10*ACCUMULATION_STEPS), 
-                (-1., 8*ACCUMULATION_STEPS)
+                (0.6, 500*ACCUMULATION_STEPS),
+                (0.50, 300*ACCUMULATION_STEPS), 
+                (0.49, 100*ACCUMULATION_STEPS), 
+                (0.48, 60*ACCUMULATION_STEPS), 
+                (0.47, 40*ACCUMULATION_STEPS), 
+                (-1., 20*ACCUMULATION_STEPS)
                 ]
 
 TOKENIZER = AutoTokenizer.from_pretrained(
