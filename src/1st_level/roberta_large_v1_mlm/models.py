@@ -44,8 +44,9 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out = torch.stack(
             tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean = torch.mean(out, dim=0)
-        out_max, _ = torch.max(out, dim=0)
-        pooled_last_hidden_states = torch.cat((out_mean, out_max), dim=-1)
+        #out_max, _ = torch.max(out, dim=0)
+        out_std = torch.std(out, dim=0)
+        pooled_last_hidden_states = torch.cat((out_mean, out_std), dim=-1)
 
         #Self attention
         weights = self.attention(pooled_last_hidden_states, mask)
