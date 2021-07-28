@@ -74,6 +74,9 @@ def run():
                 outputs = outputs.cpu().detach().numpy()
                 predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
         predicted_labels.append(predicted_labels_per_fold)
+        del all_models
+        torch.cuda.empty_cache()
+        gc.collect()
     predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
