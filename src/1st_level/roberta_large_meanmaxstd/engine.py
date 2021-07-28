@@ -47,8 +47,7 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
 
             loss = loss / config.ACCUMULATION_STEPS   
             loss.backward()
-            torch.cuda.empty_cache()
-            gc.collect()
+
 
 
             if (bi+1) % config.ACCUMULATION_STEPS    == 0:             # Wait for several backward steps
@@ -66,28 +65,18 @@ def train_fn(train_data_loader, valid_data_loader, model, optimizer, device, wri
                     if not best_val_rmse or val_rmse < best_val_rmse:                    
                         best_val_rmse = val_rmse
                         best_epoch = epoch
-                        if config.is_kaggle:
-                            torch.save(model.state_dict(), model_path)
-                        else:#colab
-                            torch.save(model.state_dict(), f'/content/{model_path_filename}')
+                        torch.save(model.state_dict(), f'/content/{model_path_filename}')
                         print(f"New best_val_rmse: {best_val_rmse:0.4}")
                     else:       
                         print(f"Still best_val_rmse: {best_val_rmse:0.4}",
                                 f"(from epoch {best_epoch})")                                    
             step += 1
 
-        torch.cuda.empty_cache()
-        gc.collect()
         writer.add_scalar('Loss/train', np.sqrt(losses.avg), (epoch+1)*len(train_data_loader))
-        if not config.is_kaggle:#colab
-            copyfile(f'/content/{model_path_filename}', model_path)
-            print("Copied best checkpoint to google drive.")
+        copyfile(f'/content/{model_path_filename}', model_path)
+        print("Copied best checkpoint to google drive.")
 
         rmse_score = eval_fn(valid_data_loader, model, device, (epoch+1)*len(train_data_loader), writer)
-        torch.cuda.empty_cache()
-        gc.collect()
-    torch.cuda.empty_cache()
-    gc.collect()
     return rmse_score
 
 def eval_fn(data_loader, model, device, iteration, writer):
