@@ -10,7 +10,7 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 model_type = 'roberta-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-roberta-large-meanstd-attention'
+my_model_dataset = 'commonlit-roberta-large-meanmaxstd-attention'
 if is_kaggle:
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -23,7 +23,7 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'roberta_large_meanstd_attention'
+    model_save = 'roberta_large_meanmaxstd_attention'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds_bins.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
