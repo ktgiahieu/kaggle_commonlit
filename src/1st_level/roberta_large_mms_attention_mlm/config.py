@@ -7,10 +7,10 @@ import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
-model_type = 'deberta-large'
+model_type = 'roberta-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-deberta-large-meanmaxstd-attention'
+my_model_dataset = 'commonlit-roberta-large-mms-attention-mlm'
 if is_kaggle:
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -19,11 +19,11 @@ if is_kaggle:
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/deberta-large'
+    MODEL_CONFIG = '../input/roberta-large-pretrained-mlm/clrp_roberta_large'
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'deberta_large_meanmaxstd_attention'
+    model_save = 'roberta_large_mms_attention_mlm'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds_bins.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -32,35 +32,35 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'microsoft/deberta-large'
+    MODEL_CONFIG = '/content/clrp_roberta_large'
 
 # Model params
-SEEDS = [1000, 25, 42, 123, 456, 789]#******
+SEEDS = [1000, 456, 789]
 N_FOLDS = 5
-EPOCHS = 4
+EPOCHS = 3
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 4
-VALID_BATCH_SIZE = 4
+TRAIN_BATCH_SIZE = 8
+VALID_BATCH_SIZE = 8
 ACCUMULATION_STEPS = 1
-MAX_LEN = 248  # actually = inf
+MAX_LEN = 248
+
+EVAL_SCHEDULE = [
+                (0.6, 300*ACCUMULATION_STEPS),
+                (0.50, 128*ACCUMULATION_STEPS), 
+                (0.49, 64*ACCUMULATION_STEPS), 
+                (0.48, 32*ACCUMULATION_STEPS), 
+                (0.47, 16*ACCUMULATION_STEPS), 
+                (-1., 8*ACCUMULATION_STEPS)
+                ]
 
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
-EVAL_SCHEDULE = [
-                (0.6, 200*ACCUMULATION_STEPS),
-                (0.50, 96*ACCUMULATION_STEPS), 
-                (0.49, 48*ACCUMULATION_STEPS), 
-                (0.48, 32*ACCUMULATION_STEPS), 
-                (0.47, 24*ACCUMULATION_STEPS), 
-                (-1., 12*ACCUMULATION_STEPS)
-                ]
-
 HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
-N_LAST_HIDDEN = 4
+N_LAST_HIDDEN = 12
 BERT_DROPOUT = 0
 CLASSIFIER_DROPOUT = 0
 WARMUP_RATIO = 0.125
@@ -74,5 +74,5 @@ NUM_SHOW_ITER = 20
 
 #Author hyperparams
 HEAD_LEARNING_RATE = 1e-3
-LEARNING_RATES_RANGE = [3e-6, 8e-6]
+LEARNING_RATES_RANGE = [2e-5, 4e-5]
 WEIGHT_DECAY = 0.01
