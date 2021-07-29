@@ -35,7 +35,7 @@ else: #colab
     MODEL_CONFIG = 'roberta-large'
 
 # Model params
-SEEDS = [1000, 25, 42]
+SEEDS = [1000, 456, 789]
 N_FOLDS = 5
 EPOCHS = 3
 
