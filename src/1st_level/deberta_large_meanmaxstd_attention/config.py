@@ -35,7 +35,7 @@ else: #colab
     MODEL_CONFIG = 'microsoft/deberta-large'
 
 # Model params
-SEEDS = [1000, 25, 42, 123, 456, 789]#******
+SEEDS = [1000, 42, 456]
 N_FOLDS = 5
 EPOCHS = 4
 
