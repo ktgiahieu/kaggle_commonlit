@@ -10,9 +10,9 @@ is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 model_type = 'funnel-transformers-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-funnel-transformers-meanmax'
+my_model_dataset = 'commonlit-funnel-transformers-mms-att'
 if is_kaggle:
-    TRAINING_FILE = f'../input/commonlit-impl/data/train_folds.csv'
+    TRAINING_FILE = f'../input/commonlit-impl/data/train_folds_bins.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
     SUB_FILE = f'../input/{comp_name}/sample_submission.csv'
     MODEL_SAVE_PATH = f'.'
@@ -23,9 +23,9 @@ if is_kaggle:
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'funnel_transformers_meanmax'
+    model_save = 'funnel_transformers_mms_att'
     
-    TRAINING_FILE = f'/content/{repo_name}/data/train_folds.csv'
+    TRAINING_FILE = f'/content/{repo_name}/data/train_folds_bins.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
     SUB_FILE = f'/content/{repo_name}/data/sample_submission.csv'
     MODEL_SAVE_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
@@ -37,13 +37,13 @@ else: #colab
 # Model params
 SEEDS = [1000, 25, 42]
 N_FOLDS = 5
-EPOCHS = 5
+EPOCHS = 3
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 8
-VALID_BATCH_SIZE = 8
-ACCUMULATION_STEPS = 2
+TRAIN_BATCH_SIZE = 4
+VALID_BATCH_SIZE = 4
+ACCUMULATION_STEPS = 1
 MAX_LEN = 248  # actually = inf
 
 EVAL_SCHEDULE = [
@@ -73,6 +73,6 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-HEAD_LEARNING_RATE = 1e-3
-LEARNING_RATES_RANGE = [1e-5, 1e-5]
+HEAD_LEARNING_RATE = 1e-4
+LEARNING_RATES_RANGE = [1e-5, 3e-5]
 WEIGHT_DECAY = 0.01

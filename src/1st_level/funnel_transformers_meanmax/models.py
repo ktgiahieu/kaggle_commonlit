@@ -6,7 +6,7 @@ import config
 class SelfAttention(torch.nn.Module):
     def __init__(self):
         super(SelfAttention, self).__init__()
-        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE*2, config.ATTENTION_HIDDEN_SIZE*2)          
+        self.linear1 = torch.nn.Linear(config.HIDDEN_SIZE*3, config.ATTENTION_HIDDEN_SIZE*2)          
         self.tanh = torch.nn.Tanh()            
         self.linear2 = torch.nn.Linear(config.ATTENTION_HIDDEN_SIZE*2, 1)
         self.softmax = torch.nn.Softmax(dim=1)
@@ -33,6 +33,9 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
+            torch.nn.Linear(config.HIDDEN_SIZE*3, config.HIDDEN_SIZE*2),
+            torch.nn.GELU(),
+            torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
             torch.nn.Linear(config.HIDDEN_SIZE*2, 1),
         )
 
@@ -45,7 +48,8 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             tuple(out[-i - 1] for i in range(config.N_LAST_HIDDEN)), dim=0)
         out_mean = torch.mean(out, dim=0)
         out_max, _ = torch.max(out, dim=0)
-        pooled_last_hidden_states = torch.cat((out_mean, out_max), dim=-1)
+        out_std = torch.std(out, dim=0)
+        pooled_last_hidden_states = torch.cat((out_mean, out_max, out_std), dim=-1)
 
         #Self attention
         weights = self.attention(pooled_last_hidden_states, mask)
