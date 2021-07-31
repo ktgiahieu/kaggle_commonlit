@@ -46,7 +46,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
 
         # Mean-max pooler
         out = out.hidden_states
-
+        print([out[-i - 1].shape for i in range(26)])
         #Decoder Block
         out_decoder = torch.stack(
             tuple(out[-i - 1] for i in range(2)), dim=0)
