@@ -30,15 +30,15 @@ class CommonlitModel(transformers.BertPreTrainedModel):
             config.MODEL_CONFIG,
             config=conf)
 
-        self.attention_decoder = SelfAttention()
-        self.attention_block3 = SelfAttention()
+        #self.attention_decoder = SelfAttention()
+        #self.attention_block3 = SelfAttention()
 
         self.classifier = torch.nn.Sequential(
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE*3, config.HIDDEN_SIZE*2),
+            torch.nn.Linear(config.HIDDEN_SIZE*3*6, config.HIDDEN_SIZE*2*6),
             torch.nn.GELU(),
             torch.nn.Dropout(config.CLASSIFIER_DROPOUT),
-            torch.nn.Linear(config.HIDDEN_SIZE*2, 1),
+            torch.nn.Linear(config.HIDDEN_SIZE*2*6, 1),
         )
 
     def forward(self, ids, mask):
