@@ -46,24 +46,24 @@ VALID_BATCH_SIZE = 4
 ACCUMULATION_STEPS = 1
 MAX_LEN = 248  # actually = inf
 
-EVAL_SCHEDULE = [
-                (0.6, 70*ACCUMULATION_STEPS),
-                (0.50, 16*ACCUMULATION_STEPS), 
-                (0.49, 8*ACCUMULATION_STEPS), 
-                (0.48, 4*ACCUMULATION_STEPS), 
-                (0.47, 2*ACCUMULATION_STEPS), 
-                (-1., 1*ACCUMULATION_STEPS)
-                ]
-
 TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
+EVAL_SCHEDULE = [
+                (0.6, 200*ACCUMULATION_STEPS),
+                (0.50, 96*ACCUMULATION_STEPS), 
+                (0.49, 48*ACCUMULATION_STEPS), 
+                (0.48, 32*ACCUMULATION_STEPS), 
+                (0.47, 24*ACCUMULATION_STEPS), 
+                (-1., 12*ACCUMULATION_STEPS)
+                ]
+
 HIDDEN_SIZE = 1024
 ATTENTION_HIDDEN_SIZE = 1024
-N_LAST_HIDDEN = 2
+N_LAST_HIDDEN = 4
 BERT_DROPOUT = 0
 CLASSIFIER_DROPOUT = 0
-WARMUP_RATIO = 0.1
+WARMUP_RATIO = 0.125
 
 USE_SWA = False
 SWA_RATIO = 0.9
