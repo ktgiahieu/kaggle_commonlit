@@ -41,8 +41,8 @@ EPOCHS = 3
 
 PATIENCE = None
 EARLY_STOPPING_DELTA = None
-TRAIN_BATCH_SIZE = 4
-VALID_BATCH_SIZE = 4
+TRAIN_BATCH_SIZE = 8
+VALID_BATCH_SIZE = 8
 ACCUMULATION_STEPS = 1
 MAX_LEN = 248  # actually = inf
 
@@ -50,12 +50,12 @@ TOKENIZER = AutoTokenizer.from_pretrained(
     MODEL_CONFIG)
 
 EVAL_SCHEDULE = [
-                (0.6, 200*ACCUMULATION_STEPS),
-                (0.50, 96*ACCUMULATION_STEPS), 
-                (0.49, 48*ACCUMULATION_STEPS), 
-                (0.48, 32*ACCUMULATION_STEPS), 
-                (0.47, 24*ACCUMULATION_STEPS), 
-                (-1., 12*ACCUMULATION_STEPS)
+                (0.6, 100*ACCUMULATION_STEPS),
+                (0.50, 48*ACCUMULATION_STEPS), 
+                (0.49, 32*ACCUMULATION_STEPS), 
+                (0.48, 24*ACCUMULATION_STEPS), 
+                (0.47, 16*ACCUMULATION_STEPS), 
+                (-1., 8*ACCUMULATION_STEPS)
                 ]
 
 HIDDEN_SIZE = 1024
@@ -73,6 +73,6 @@ SHOW_ITER_VAL = False
 NUM_SHOW_ITER = 20
 
 #Author hyperparams
-HEAD_LEARNING_RATE = 1e-4
-LEARNING_RATES_RANGE = [1e-5, 3e-5]
+HEAD_LEARNING_RATE = 5e-5
+LEARNING_RATES_RANGE = [5e-6, 1e-5]
 WEIGHT_DECAY = 0.01
