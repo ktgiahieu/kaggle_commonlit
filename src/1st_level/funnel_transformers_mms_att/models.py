@@ -65,11 +65,11 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out_max_block3, _ = torch.max(out_block3, dim=0)
         out_std_block3 = torch.std(out_block3, dim=0)
         pooled_last_hidden_states_block3 = torch.cat((out_mean_block3, out_max_block3, out_std_block3), dim=-1)
-        #Self attention
-        weights_block3 = self.attention_block3(pooled_last_hidden_states_block3)
-        context_vector_block3 = torch.sum(weights_block3 * pooled_last_hidden_states_block3, dim=1) 
+        ##Self attention
+        #weights_block3 = self.attention_block3(pooled_last_hidden_states_block3)
+        #context_vector_block3 = torch.sum(weights_block3 * pooled_last_hidden_states_block3, dim=1) 
 
         #context_vector = torch.cat([context_vector_block3, context_vector_decoder], dim=-1) 
-        context_vector = context_vector_block3
+        context_vector = torch.cat(tuple(pooled_last_hidden_states_block3[:,i,:] for i in range(6)), dim=-1)
 
         return self.classifier(context_vector)
