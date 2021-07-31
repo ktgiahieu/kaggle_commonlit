@@ -36,13 +36,14 @@ def run():
         num_workers=1)
     
     predicted_labels = []
+    all_models = []
+    for seed in config.SEEDS:
+        model = models.CommonlitModel(conf=model_config)
+        model.to(device)
+        model.eval()
+        all_models.append(model)
     for i in range(config.N_FOLDS):  
-        all_models = []
-        torch.cuda.empty_cache()
-        gc.collect()
-        for seed in config.SEEDS:
-            model = models.CommonlitModel(conf=model_config)
-            model.to(device)
+        for s, seed in enumerate(config.SEEDS):
             if config.is_kaggle:
                 if i<=2:
                     model_path = f'{config.TRAINED_MODEL_PATH}-p1/model_{i}_{seed}.bin'
@@ -50,9 +51,7 @@ def run():
                     model_path = f'{config.TRAINED_MODEL_PATH}-p2/model_{i}_{seed}.bin'
             else:
                 model_path = f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'
-            model.load_state_dict(torch.load(model_path), strict=False)
-            model.eval()
-            all_models.append(model)
+            all_models[s].load_state_dict(torch.load(model_path), strict=False)
 
         predicted_labels_per_fold = []
         with torch.no_grad():
@@ -79,9 +78,6 @@ def run():
                 outputs = outputs.cpu().detach().numpy()
                 predicted_labels_per_fold.extend(outputs.squeeze(-1).tolist())
         predicted_labels.append(predicted_labels_per_fold)
-        del all_models
-        torch.cuda.empty_cache()
-        gc.collect()
     predicted_labels = np.mean(np.array(predicted_labels), axis=0).tolist()
 
     if not os.path.isdir(f'{config.INFERED_PICKLE_PATH}'):
@@ -90,6 +86,12 @@ def run():
     pickle_name = sys.argv[1]
     with open(f'{config.INFERED_PICKLE_PATH}/{pickle_name}.pkl', 'wb') as handle:
         pickle.dump(predicted_labels, handle)
+
+    del test_dataset
+    del data_loader
+    del all_models
+    torch.cuda.empty_cache()
+    gc.collect()
 
 
 if __name__ == '__main__':
