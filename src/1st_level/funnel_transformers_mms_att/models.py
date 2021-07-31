@@ -48,15 +48,15 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         out = out.hidden_states
         #print([out[-i - 1].shape for i in range(26)])
         #Decoder Block
-        out_decoder = torch.stack(
-            tuple(out[-i - 1] for i in range(3)), dim=0)
-        out_mean_decoder = torch.mean(out_decoder, dim=0)
-        out_max_decoder, _ = torch.max(out_decoder, dim=0)
-        out_std_decoder = torch.std(out_decoder, dim=0)
-        pooled_last_hidden_states_decoder = torch.cat((out_mean_decoder, out_max_decoder, out_std_decoder), dim=-1)
-        #Self attention
-        weights_decoder = self.attention_decoder(pooled_last_hidden_states_decoder, mask)
-        context_vector_decoder = torch.sum(weights_decoder * pooled_last_hidden_states_decoder, dim=1) 
+        #out_decoder = torch.stack(
+        #    tuple(out[-i - 1] for i in range(3)), dim=0)
+        #out_mean_decoder = torch.mean(out_decoder, dim=0)
+        #out_max_decoder, _ = torch.max(out_decoder, dim=0)
+        #out_std_decoder = torch.std(out_decoder, dim=0)
+        #pooled_last_hidden_states_decoder = torch.cat((out_mean_decoder, out_max_decoder, out_std_decoder), dim=-1)
+        ##Self attention
+        #weights_decoder = self.attention_decoder(pooled_last_hidden_states_decoder, mask)
+        #context_vector_decoder = torch.sum(weights_decoder * pooled_last_hidden_states_decoder, dim=1) 
 
         #Encoder Block 3
         out_block3 = torch.stack(
@@ -69,6 +69,7 @@ class CommonlitModel(transformers.BertPreTrainedModel):
         weights_block3 = self.attention_block3(pooled_last_hidden_states_block3)
         context_vector_block3 = torch.sum(weights_block3 * pooled_last_hidden_states_block3, dim=1) 
 
-        context_vector = torch.cat([context_vector_block3, context_vector_decoder], dim=-1) 
+        #context_vector = torch.cat([context_vector_block3, context_vector_decoder], dim=-1) 
+        context_vector = context_vector_block3
 
         return self.classifier(context_vector)
