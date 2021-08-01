@@ -47,6 +47,7 @@ def run():
         torch.cuda.empty_cache()
         gc.collect()
         for s, seed in enumerate(config.SEEDS):
+            print(s, seed, len(all_models))
             all_models[s].load_state_dict(torch.load(
                 f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'),
                 map_location="cuda")
