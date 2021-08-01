@@ -7,10 +7,10 @@ import os
 is_kaggle = 'KAGGLE_URL_BASE' in os.environ
 
 # Paths
-model_type = 'deberta-large'
+model_type = 'bart-large'
 comp_name = 'commonlitreadabilityprize'
 my_impl = 'commonlit-impl'
-my_model_dataset = 'commonlit-deberta-large-meanmaxstd-attention'
+my_model_dataset = 'commonlit-bart-large-meanmaxstd-attention'
 if is_kaggle:
     TRAINING_FILE = f'../input/{comp_name}/train.csv'
     TEST_FILE = f'../input/{comp_name}/test.csv'
@@ -19,11 +19,11 @@ if is_kaggle:
     TRAINED_MODEL_PATH = f'../input/{my_model_dataset}'
     INFERED_PICKLE_PATH = '.'
 
-    MODEL_CONFIG = '../input/deberta-large'
+    MODEL_CONFIG = '../input/bart-large'
 else: #colab
     repo_name = 'kaggle_commonlit'
     drive_name = 'Commonlit'
-    model_save = 'deberta_large_meanmaxstd_attention'
+    model_save = 'bart_large_meanmaxstd_attention'
     
     TRAINING_FILE = f'/content/{repo_name}/data/train_folds_bins.csv'
     TEST_FILE = f'/content/{repo_name}/data/test.csv'
@@ -32,7 +32,7 @@ else: #colab
     TRAINED_MODEL_PATH = f'/content/gdrive/MyDrive/Dataset/{drive_name}/model_save/1st_level/{model_save}'
     INFERED_PICKLE_PATH = f'/content/{repo_name}/pickle'
 
-    MODEL_CONFIG = 'microsoft/deberta-large'
+    MODEL_CONFIG = 'facebook/bart-large'
 
 # Model params
 SEEDS = [1000, 42, 456]
