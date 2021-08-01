@@ -51,7 +51,7 @@ def run():
                     model_path = f'{config.TRAINED_MODEL_PATH}-p2/model_{i}_{seed}.bin'
             else:
                 model_path = f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'
-            all_models[s].load_state_dict(torch.load(model_path), map_location="cuda")
+            all_models[s].load_state_dict(torch.load(model_path, map_location="cuda"))
 
         predicted_labels_per_fold = []
         with torch.no_grad():

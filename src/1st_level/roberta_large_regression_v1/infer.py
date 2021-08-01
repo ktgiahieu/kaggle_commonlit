@@ -45,8 +45,7 @@ def run():
     for i in range(config.N_FOLDS):  
         for s, seed in enumerate(config.SEEDS):
             all_models[s].load_state_dict(torch.load(
-                f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'),
-                map_location="cuda")
+                f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin', map_location="cuda"))
 
         predicted_labels_per_fold = []
         with torch.no_grad():
