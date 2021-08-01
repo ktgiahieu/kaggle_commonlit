@@ -42,10 +42,8 @@ def run():
         model.to(device)
         model.eval()
         all_models.append(model)
-    print(len(all_models))
     for i in range(config.N_FOLDS):  
         for s, seed in enumerate(config.SEEDS):
-            print(s, seed, len(all_models))
             all_models[s].load_state_dict(torch.load(
                 f'{config.TRAINED_MODEL_PATH}/model_{i}_{seed}.bin'),
                 map_location="cuda")
